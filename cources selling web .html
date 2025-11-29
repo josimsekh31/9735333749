@@ -1,0 +1,4114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #7C3AED;     /* Electric Violet */
+      --accent: #FF2D95;      /* Neon Magenta */
+      --secondary: #4C1D95;   /* Deep Purple */
+      --bg-dark: #0B0426;     /* Near-black indigo */
+      --surface: #0F072F;     /* Card background */
+      --text: #F8F6FF;        /* Bright text */
+      --muted: #BDB4FF;       /* Muted text */
+      --gradient: linear-gradient(135deg, #7C3AED 0%, #FF2D95 100%);
+      --transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      --radius: 12px;
+
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(15, 7, 47, 0.6);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+    }
+    .nav-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        justify-content: space-between; /* Distribute space between nav and search */
+        flex-grow: 1; /* Allow this to grow */
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary);
+      text-decoration: none; /* Remove underline */
+      margin-right: 5rem; /* Add gap between logo and nav links */
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .logo:hover {
+      color: var(--accent);
+      transform: scale(1.07);
+      text-shadow: 0 0 20px var(--accent);
+    }
+    .logo span {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .logo img {
+        height: 50px; /* Made logo bigger */
+        width: auto;
+        object-fit: contain;
+        border-radius: 50%;
+        filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.5));
+    }
+
+    /* Nav links */
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    nav a {
+      position: relative;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      left: 0;
+      bottom: -4px;
+      background: var(--accent);
+      transition: width 0.3s ease-in-out;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      transform: scale(1.07);
+    }
+
+    /* New Profile Icon */
+    .profile-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid var(--accent);
+      transition: var(--transition);
+      display: none; /* Hidden by default */
+    }
+    .profile-icon.active {
+      box-shadow: 0 0 15px var(--accent);
+      transform: scale(1.05);
+    }
+
+    .profile-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .profile-icon:hover {
+      box-shadow: 0 0 15px var(--accent);
+      transform: scale(1.05);
+    }
+
+
+    /* Search bar */
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent);
+    }
+
+    .search-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(255,45,149,0.4);
+    }
+
+    /* Sign In button */
+    .signin-btn {
+      background: none;
+      border: 2px solid transparent;
+      background-image: var(--gradient);
+      background-clip: padding-box;
+      color: var(--text);
+      padding: 0.6rem 1.3rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .signin-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      background: var(--gradient);
+      filter: blur(20px);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+    }
+
+    .signin-btn:hover::before {
+      opacity: 1;
+    }
+
+    .signin-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 20px rgba(255,45,149,0.4);
+    }
+
+    /* Hamburger Menu Toggle */
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .navbar {
+        padding: 1rem 1.5rem;
+      }
+      .nav-wrapper nav {
+        display: none; /* Hide nav links on mobile */
+      }
+      .nav-wrapper {
+        justify-content: flex-end; /* Push content to the right */
+      }
+  
+      .search-container {
+        margin-left: auto; /* Push profile/signin to the right */
+      }
+      .signin-btn {
+        padding: 0.5rem 1rem; /* Adjust padding for mobile */
+        font-size: 0.9rem;
+      }
+      .profile-icon {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+/* --- About section styles (responsive, glassy + gradients) --- */
+.cw-about {
+  padding: 48px 20px;
+  background: linear-gradient(180deg, rgba(16,7,32,0.6), rgba(8,4,20,0.6));
+  color: #e8e7ee;
+  text-align: center; /* Center align all text in this section */
+}
+.cw-about-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr; /* Change to a single column layout */
+  gap: 30px;
+  align-items: start;
+}
+
+/* Left text */
+.cw-h {
+  font-size: 2.5rem; /* Match other section titles */
+  margin-bottom: 6px;
+  /* Animated Gradient Text */
+  background: linear-gradient(10deg, #7C3AED, #FF2D95, #00FFFF, #7C3AED);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated-gradient-text 8s ease infinite;
+}
+.cw-sub {
+  font-size: 16px;
+  color: var(--muted); /* Use muted text color */
+  margin-bottom: 12px;
+  max-width: 600px; /* Constrain width for readability */
+  margin-left: auto;
+  margin-right: auto;
+}
+.cw-body {
+  color: #cfcce0;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+.cw-about-text {
+  margin-bottom: 30px; /* Add space between text and cards */
+}
+.cw-highlights {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-width: 500px; /* Constrain width */
+  margin: 16px auto; /* Center the highlights */
+}
+.cw-highlights li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #e6e4f5;
+  font-size: 14px;
+  text-align: left; /* Keep list item text left-aligned */
+}
+.cw-highlights li i {
+  color: #7C3AED;
+  font-size: 16px;
+  min-width: 20px;
+}
+
+/* CTA buttons */
+.cw-cta-row { margin-top: 18px; display:flex; gap:12px; flex-wrap:wrap; justify-content: center; }
+.cw-btn {
+  display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:10px;
+  text-decoration:none; font-weight:600; font-size:14px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cw-btn:hover { transform: translateY(-4px); }
+.cw-primary {
+  background: var(--gradient); /* Use primary gradient */
+  color: #fff; box-shadow: 0 8px 30px rgba(124,58,237,0.12);
+}
+.cw-ghost {
+  background: transparent; color: var(--accent); border: 1px solid var(--accent);
+}
+
+/* --- Auto-scrolling slider for skill cards --- */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.cw-about-slider-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.cw-about-cards {
+  display: flex;
+  width: max-content; /* Allow the container to be as wide as its content */
+  gap: 18px;
+  padding: 10px 0;
+  animation: scroll 40s linear infinite;
+}
+
+.cw-about-slider-wrapper:hover .cw-about-cards {
+  animation-play-state: paused;
+}
+
+/* Hide scrollbar that might appear from overflow */
+.cw-about-cards::-webkit-scrollbar {
+  display: none;
+}
+.cw-about-cards {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.cw-card {
+  flex: 0 0 320px; /* Give cards a fixed width so they don't shrink */
+  width: 320px;
+  display:flex;
+  gap: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: 12px;
+  padding: 12px;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 30px rgba(11,5,30,0.5);
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+.cw-card:hover { transform: translateY(-6px); box-shadow: 0 18px 50px rgba(124,58,237,0.08); }
+.cw-card-media {
+  flex: 0 0 120px;
+  height: 80px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.cw-card-media img {
+  width: 100%; height: 100%; object-fit: cover; display:block;
+  transition: transform .6s ease;
+}
+.cw-card:hover .cw-card-media img { transform: scale(1.06) rotate(-0.6deg); }
+.cw-card-body h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+  display:flex; gap:8px; align-items:center;
+  text-align: left;
+}
+.cw-card-body h3 i { color: var(--primary); min-width:22px; font-size:18px; }
+.cw-card-body p { color: var(--muted); font-size:14px; line-height:1.4; text-align: left; }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 5rem 8%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Creative gradient shapes */
+    .shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .shape:nth-child(1){ width: 300px; height: 300px; top: 10%; left: 10%; animation-delay: 0s;}
+    .shape:nth-child(2){ width: 200px; height: 200px; top: 50%; left: 5%; animation-delay: 2s;}
+    .shape:nth-child(3){ width: 250px; height: 250px; top: 30%; left: 25%; animation-delay: 4s;}
+
+    @keyframes floatShape {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* Left Image */
+    .hero-image {
+      flex: 1 1 45%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      position: relative;
+    }
+    .hero-image img {
+      width: 80%;
+      max-width: 400px;
+      border-radius: 20px;    }
+
+    /* Hero Logo Overlay Adjustment */
+    .hero-logo-overlay {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 250px;
+        height: 290px;
+        opacity: 0.8;
+        border-radius: 50%;
+        drop-shadow: 0 0 15px rgba(124, 58, 237, 0.6);
+        pointer-events: none; /* Make it non-interactive */
+    }
+    @media (max-width: 950px) {
+        .hero-logo-overlay { display: none; } /* Hide on mobile to avoid clutter */
+    }
+
+    /* Right Content */
+    .hero-content {
+      flex: 1 1 50%;
+      z-index: 2;
+      text-align: left;
+    }
+
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-content h1 span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .typewriter {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+
+    .hero-content p {
+      color: var(--muted);
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 550px;
+    }
+
+    .subtext {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Buttons */
+    .hero-buttons {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: 30px;
+      padding: 0.8rem 1.8rem;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,45,149,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px rgba(255,45,149,0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,45,149,0.4);
+    }
+
+    @media (max-width: 950px) {
+      .hero {
+        flex-direction: column-reverse;
+        text-align: center;
+      }
+      .hero-content h1 {
+        font-size: 2.3rem;
+      }
+      .hero-content p {
+        max-width: 100%;
+      }
+      .hero-content p {
+        margin: auto;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+    }
+
+/* 🌌 CONTACT SECTION */
+.contact {
+  background: #0F072F;
+  padding: 6rem 8%;
+  border-top: 1px solid rgba(255, 45, 149, 0.1);
+}
+
+.contact .section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  /* Animated Gradient Text */
+  background: linear-gradient(125deg, #7C3AED, #FF2D95, #00FFFF, #7C3AED);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated-gradient-text 8s ease infinite;
+}
+.contact .section-subtitle {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+/* ===== Wrapper ===== */
+.contact-wrapper {
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+  margin: 0 auto;
+  max-width: 1100px;
+}
+
+/* ===== New Contact Image ===== */
+.contact-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+/* ===== Contact Info Cards ===== */
+.contact-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  flex: 1;
+  min-width: 300px;
+}
+.contact-info a {
+  text-decoration: none;
+}
+.info-line {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid var(--accent);
+  transition: 0.3s ease;
+}
+.info-line:hover {
+  background: rgba(255, 45, 149, 0.1);
+  transform: translateY(-3px);
+}
+.info-line i {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.info-line h4 {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0 0 2px 0;
+}
+.info-line p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ===== Contact Form ===== */
+.contact-form {
+  flex: 1.5;
+  display: grid;
+  gap: 20px;
+}
+
+.input-group {
+  position: relative;
+}
+.input-group label {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 1.2rem;
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(255, 45, 149, 0.7);
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  outline: none;
+  color: var(--text); /* Ensure text color is correct */
+}
+.input-group input:focus,
+.input-group textarea:focus {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 15px rgba(255, 45, 149, 0.5);
+}
+.input-group textarea {
+  resize: none;
+  min-height: 120px;
+}
+
+/* ===== Note ===== */
+.note {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: left;
+  display: none; /* Hide by default */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+  .contact-wrapper {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .contact {
+    padding: 4rem 1.5rem;
+  }
+}
+
+/* COURSES SECTION STYLES */
+.courses {
+  background: #0B0426;
+  color: #F8F6FF;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+.courses h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.courses h2 span {
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.courses .subtext {
+  color: #BDB4FF;
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+
+/* Course Container */
+.trending .course-container, .courses-grid { /* Apply to both sections */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  justify-items: center;
+  margin-top: 3rem; /* Added margin to separate from subheading */
+}
+
+/* Course Card */
+.trending .course-card, .courses-grid .course-card {
+  background: #0F072F;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+  max-width: 350px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.trending .course-card:hover, .courses-grid .course-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 0 35px rgba(255, 45, 149, 0.4);
+}
+.trending .course-card img, .courses-grid .course-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Content */
+.course-content {
+  padding: 1.2rem; /* Adjusted padding slightly */
+  text-align: left;
+}
+.course-content h3 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin-bottom: 0.7rem;
+}
+.course-content p {
+  color: #BDB4FF;
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+.course-content .instructor {
+  color: #BDB4FF;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+.course-content .instructor i {
+  color: #7C3AED;
+  margin-right: 5px;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  font-size: 0.85rem;
+  color: #BDB4FF;
+  margin-bottom: 1.2rem;
+}
+.stats i {
+  color: #FF2D95;
+  margin-right: 4px;
+}
+
+/* Price */
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.price .fake {
+  text-decoration: line-through;
+  color: #BDB4FF;
+  font-size: 0.95rem;
+}
+.price .real {
+  color: #00FF99;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.btn-course {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  color: #F8F6FF;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-course::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, #FF2D95, #7C3AED, #FF2D95);
+  opacity: 0;
+  transform: rotate(25deg);
+  transition: all 0.5s ease;
+  z-index: -1; /* Changed to -1 to be behind the text */
+}
+
+.btn-course:hover::before {
+  opacity: 0.25;
+  transform: rotate(0deg);
+}
+
+.btn-course:hover {
+  transform: scale(1.07);
+}
+
+.btn-course:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 10px rgba(255, 45, 149, 0.4);
+}
+
+/* Wishlist (Love) Button on Course Card */
+.wishlist-btn-card {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(11, 4, 38, 0.6);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+}
+.wishlist-btn-card:hover, .wishlist-btn-card.active {
+  background: var(--accent);
+  color: white;
+}
+/*  FOOTER BASE */
+.footer {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at top left, #0B0426 10%, #13063A 90%);
+  color: #EAE6FF;
+  padding: 3rem 0 2rem;
+}
+.footer-divider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(90deg, #FF2D95, #7C3AED, #00FFFF, #FF2D95);
+  background-size: 300% 100%;
+  animation: glowLine 6s linear infinite;
+}
+@keyframes glowLine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.glow-wave {
+  position: absolute;
+  bottom: -60%;
+  left: -10%;
+  width: 160%;
+  height: 220%;
+}
+@keyframes wavePulse {
+  from { transform: scale(1) rotate(0deg); opacity: 0.9; }
+  to { transform: scale(1.2) rotate(10deg); opacity: 0.6; }
+}
+
+/* floating shimmer particles */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: floatY 10s ease-in-out infinite;
+}
+@keyframes floatY {
+  0% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(-25px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.7; }
+}
+.p1 { top: 20%; left: 10%; background: #FF2D95; animation-delay: 0s; }
+.p2 { top: 60%; left: 25%; background: #7C3AED; animation-delay: 2s; }
+.p3 { top: 35%; left: 55%; background: #FF61C2; animation-delay: 4s; }
+.p4 { top: 70%; left: 75%; background: #B56FFF; animation-delay: 6s; }
+.p5 { top: 45%; left: 90%; background: #9B5CFF; animation-delay: 8s; }
+
+/* glowing waves + particles */
+.footer-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+
+/* footer content */
+.footer-container {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+}
+.footer-about {
+  flex: 2; /* Give more space to the main description */
+  min-width: 300px;
+}
+.footer-nav-wrapper { /* New wrapper for the link columns */
+  flex: 3;
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+}
+.footer-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.7rem;
+}
+.footer-desc { font-size: 0.96rem; color: #CFC7FF; margin-bottom: 1.4rem; line-height: 1.6; }
+
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+}
+.footer-socials a {
+  font-size: 1.2rem;
+  color: #CFC7FF;
+  padding: 0.6rem;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  transition: all 0.3s ease;
+}
+.footer-socials a:hover {
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  box-shadow: 0 0 20px rgba(255,45,149,0.6);
+  transform: scale(1.15);
+  color: white;
+}
+
+/* links */
+.footer-links, .footer-legal { flex: 1 1 220px; }
+.footer-links h3, .footer-legal h3 {
+  font-size: 1.15rem;
+  color: #FF2D95;
+  margin-bottom: 1rem;
+  border-left: 3px solid #7C3AED;
+  padding-left: 8px;
+}
+.footer-links ul, .footer-legal ul { list-style: none; padding: 0; }
+.footer-links a, .footer-legal a {
+  color: #CFC7FF;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+.footer-links a:hover, .footer-legal a:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #FF2D95;
+}
+
+/* copyright */
+.footer-bottom {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #AFA6FF;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1rem;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .footer-container, .footer-nav-wrapper { flex-direction: column; align-items: flex-start; }
+}
+
+/* Course Detail Page Initial State */
+#course-detail-page {
+  display: none; /* Hidden by default */
+}
+
+/* 🌌 PRIVACY DRAWER & TERMS DRAWER */
+#privacy-drawer, #terms-drawer {
+  position: fixed;
+  left: 0;
+  bottom: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 5, 30, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+  transition: bottom 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#privacy-drawer.active, #terms-drawer.active { bottom: 0; }
+
+.drawer-glass h3 {
+  color: #FF2D95;
+  font-size: 1.4rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+.drawer-glass ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  color: #D9D2FF;
+  margin-bottom: 1rem;
+}
+.drawer-glass ul li {
+  margin-bottom: 0.5rem;
+}
+.drawer-glass p b {
+  color: #fff;
+}
+.drawer-glass {
+  position: relative;
+  max-width: 850px;
+  max-height: 80vh; /* Set a max height for the glass container */
+  margin: 5rem auto;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 2.5rem;
+  display: flex; /* Use flexbox for better layout */
+  flex-direction: column;
+  animation: fadeIn 0.8s ease forwards;
+  overflow: hidden; /* The inner container shouldn't scroll, the .drawer-scroll should */
+}
+.drawer-scroll {
+  flex-grow: 1; /* Allow this area to grow and fill the space */
+  overflow-y: auto;
+  padding-right: 1rem;
+  scroll-behavior: smooth;
+}
+.drawer-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.drawer-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  border-radius: 10px;
+}
+.drawer-scroll::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+}
+.close-drawer {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 1.8rem;
+  background: transparent;
+  border: none;
+  color: #FF2D95;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.close-drawer:hover {
+  transform: rotate(90deg);
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Course Layout */
+.course-detail { padding: 4rem 2rem; max-width: 1200px; margin: auto; position: relative; }
+.course-container { display: flex; flex-wrap: wrap; gap: 3rem; align-items: center; }
+.course-poster img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 0 30px rgba(124,58,237,0.5); }
+.course-info { flex: 1; }
+.course-title { font-size: 2.5rem; background: linear-gradient(135deg, #FF2D95, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.course-desc { color: #CFC7FF; margin-top: 1rem; line-height: 1.7; }
+.course-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem; }
+.course-meta i { color: #FF2D95; margin-right: 6px; }
+.course-pricing { display: flex; align-items: baseline; gap: 1rem; margin-top: 1.5rem; }
+.real-cost { text-decoration: line-through; color: #777; }
+.our-cost { color: #FF2D95; font-size: 2rem; font-weight: bold; }
+.course-stats { display: flex; gap: 1.2rem; margin-top: 1.5rem; flex-wrap: wrap; color: #BFAFFF; }
+.buy-btn { background: linear-gradient(135deg, #7C3AED, #FF2D95); border: none; border-radius: 50px; padding: 0.9rem 2rem; font-weight: 600; color: #fff; box-shadow: 0 0 20px rgba(255,45,149,0.6); cursor: pointer; transition: all 0.3s; }
+.buy-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,45,149,0.8); }
+
+/* Instructor Section */
+.instructor-section { margin-top: 4rem; }
+.instructor-section h2, .learn-section h2, .requirements h2, .course-episodes h2, .reviews h2 { color: #FF2D95; margin-bottom: 1.5rem; }
+.instructor-card { display: flex; align-items: center; gap: 1.5rem; margin-top: 1rem; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); }
+.instructor-card img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #7C3AED; }
+.instructor-card h3 { margin: 0; color: #fff; }
+.instructor-card p { color: #CFC7FF; margin-top: 0.5rem; line-height: 1.5; }
+.verified { color: #FF2D95; font-size: 0.9rem; margin-left: 6px; }
+
+/* Learn, Requirements, Episodes */
+.learn-section, .requirements, .course-episodes { margin-top: 3rem; }
+.learn-section ul, .requirements ul { list-style: none; padding: 0; }
+.learn-section li, .requirements li { color: #CFC7FF; margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
+.learn-section li::before, .requirements li::before { content: "✦ "; color: #FF2D95; position: absolute; left: 0; }
+
+/* Episodes */
+.episode-list { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1); }
+.episode { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: #CFC7FF; }
+.episode:last-child { border-bottom: none; }
+.episode i { color: #7C3AED; }
+.watch-btn {
+  background: #7C3AED;
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: none; /* Hidden by default */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s ease;
+  box-shadow: 0 0 15px rgba(255, 45, 149, 0.3);
+}
+.watch-btn:hover { background: #FF2D95; }
+.watch-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 45, 149, 0.6); }
+
+/* Reviews */
+.reviews { margin-top: 4rem; }
+.review-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.review-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(124,58,237,0.2); transition: 0.3s; }
+.review-card:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(255,45,149,0.5); }
+.review-card p { color: #EAE6FF; margin-bottom: 0.5rem; line-height: 1.6; }
+.review-card span { display: block; margin-top: 0.5rem; color: #CFC7FF; font-size: 0.9rem; }
+
+/* Floating Drawer */
+.buy-drawer { position: fixed; bottom: -100%; left: 0; width: 100%; height: 100%; background: rgba(12, 5, 40, 0.8); backdrop-filter: blur(15px); border-top: 2px solid #FF2D95; display: flex; align-items: center; justify-content: center; transition: 0.6s ease; z-index: 1000; }
+.buy-drawer.active { bottom: 0; }
+.buy-content { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,45,149,0.4); border-radius: 20px; padding: 2rem 3rem; text-align: center; box-shadow: 0 0 40px rgba(124,58,237,0.5); position: relative; width: 90%; max-width: 500px; }
+.buy-content h2 { color: #FF2D95; margin-bottom: 1rem; }
+.buy-content p { color: #CFC7FF; margin-bottom: 0.5rem; }
+.buy-content p b { color: #fff; }
+.buy-content .our-cost { font-size: 1.8rem; } /* Adjust font size for consistency */
+.buy-content .buy-btn { margin-top: 1.5rem; }
+.close-drawer { position: absolute; right: 20px; top: 15px; cursor: pointer; color: #FF2D95; font-size: 1.5rem; transition: 0.3s; }
+.close-drawer:hover { transform: rotate(90deg); color: #fff; }
+
+/* Vote Buttons */
+.vote-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.vote-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text);
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.vote-btn:hover, .vote-btn.active { background: var(--primary); border-color: var(--primary); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .course-container { flex-direction: column; text-align: center; }
+  .instructor-card { flex-direction: column; text-align: center; }
+  .course-detail { padding: 2rem 1rem; }
+  .course-title { font-size: 2rem; }
+  .buy-content { padding: 1.5rem 2rem; }
+}
+
+/* Enrolled State */
+.course-detail.enrolled .buy-btn { display: none; } /* Hide main buy button */
+.course-detail.enrolled .watch-btn { display: inline-block; } /* Show watch buttons */
+
+
+.close-course-detail {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    color: #FF2D95;
+    cursor: pointer;
+    transition: 0.3s ease;
+    z-index: 10;
+}
+
+.courses-section {
+  padding: 80px 5%;
+  background: #0B0426;
+  color: #F8F6FF;
+  text-align: center;
+}
+
+.courses-heading {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  /* Animated Gradient Text */
+  background: linear-gradient(125deg, #7C3AED, #FF2D95, #00FFFF, #7C3AED);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated-gradient-text 8s ease infinite;
+}
+.courses-subheading {
+  font-size: 1.2rem;
+  color: #BDB4FF;
+  margin-bottom: 40px;
+}
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.cat-btn {
+  background: transparent;
+  border: 2px solid #7C3AED;
+  color: #F8F6FF;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.cat-btn.active,
+.cat-btn:hover {
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.6);
+}
+/* Search Bar in Courses Section */
+.courses-search-container {
+  max-width: 600px;
+  margin: 0 auto 50px;
+  position: relative;
+}
+
+.courses-search-box {
+  width: 100%;
+  padding: 15px 20px 15px 50px;
+  border-radius: 30px;
+  border: 2px solid #7C3AED;
+  background: rgba(15, 7, 47, 0.8);
+  color: #F8F6FF;
+  font-size: 1.1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.courses-search-box:focus {
+  border-color: #FF2D95;
+  box-shadow: 0 0 20px rgba(255, 45, 149, 0.5);
+}
+
+.courses-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  gap: 10px;
+}
+
+.page-btn {
+  background: transparent;
+  border: 2px solid #7C3AED;
+  color: #F8F6FF;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-btn.active,
+.page-btn:hover {
+  background: linear-gradient(135deg, #7C3AED, #FF2D95);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
+}
+
+/* Search Suggestions */
+#search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  z-index: 10;
+  max-height: 400px;
+  overflow-y: auto;
+  display: none; /* Hidden by default */
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.suggestion-item:hover {
+  background: rgba(255, 45, 149, 0.1);
+}
+.suggestion-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+/* ===== FAQ Section Styling ===== */
+.faq-section {
+  position: relative;
+  padding: 100px 10%;
+  background: #0B0426;
+  color: #F8F6FF;
+  overflow: hidden;
+}
+
+.faq-heading {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  /* Animated Gradient Text */
+  background: linear-gradient(125deg, #7C3AED, #FF2D95, #00FFFF, #7C3AED);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animated-gradient-text 8s ease infinite;
+}
+
+.faq-subheading {
+  text-align: center;
+  color: #BDB4FF;
+  margin-bottom: 50px;
+  font-size: 1.1rem;
+}
+
+/* FAQ Container */
+.faq-container {
+  max-width: 900px;
+  margin: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.faq-item {
+  background: rgba(15, 7, 47, 0.7);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(255, 45, 149, 0.15);
+}
+
+.faq-item:hover {
+  border-color: #FF2D95;
+  box-shadow: 0 0 35px rgba(255, 45, 149, 0.35);
+  transform: translateY(-3px);
+}
+
+.faq-question {
+  width: 100%;
+  background: transparent;
+  color: #F8F6FF;
+  text-align: left;
+  padding: 20px 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-icon {
+  font-size: 1.5rem;
+  color: #FF2D95;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+  color: #7C3AED;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  padding: 0 25px;
+  color: #BDB4FF;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 400px;
+  padding: 20px 25px 25px;
+}
+
+/* ===== Glowing Gradient Background Particles ===== */
+.faq-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.faq-bg .particle {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+}
+
+/* Random positions */
+.faq-bg .particle:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+.faq-bg .particle:nth-child(2) { top: 40%; left: 70%; animation-delay: 3s; width: 180px; height: 180px; }
+.faq-bg .particle:nth-child(3) { top: 70%; left: 30%; animation-delay: 5s; width: 120px; height: 120px; }
+.faq-bg .particle:nth-child(4) { top: 20%; left: 85%; animation-delay: 7s; width: 160px; height: 160px; }
+.faq-bg .particle:nth-child(5) { top: 80%; left: 10%; animation-delay: 10s; width: 200px; height: 200px; }
+
+@keyframes floatParticle {
+  0% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-50px) translateX(30px) scale(1.3); opacity: 1; }
+  100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
+}
+
+/* Keyframe for animated gradient text */
+@keyframes animated-gradient-text {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .faq-heading { font-size: 2rem; }
+  .faq-question { font-size: 1rem; padding: 15px 20px; }
+  .faq-answer { font-size: 0.95rem; }
+}
+
+/* --- Profile Panel --- */
+.profile-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 100%;
+  max-width: 350px;
+  height: 100vh;
+  background: rgba(20, 10, 45, 0.95);
+  box-shadow: -2px 0 25px rgba(255, 45, 149, 0.3);
+  transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 40px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(15px);
+}
+.profile-panel.active {
+  right: 0;
+}
+.profile-avatar-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+.profile-panel #profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.profile-avatar-container #upload-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.profile-panel h3 {
+  color: var(--accent);
+  margin-bottom: 5px;
+  text-transform: capitalize;
+}
+.profile-panel p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 25px;
+}
+.profile-panel .profile-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* --- Profile Panel Tabs --- */
+.profile-tabs {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.profile-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.profile-tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.profile-tab-btn.active, .profile-tab-btn:hover {
+  color: var(--accent);
+}
+.profile-tab-btn.active::after {
+  width: 100%;
+}
+.profile-tab-content {
+  display: none;
+  width: 100%;
+}
+.profile-tab-content.active {
+  display: block;
+}
+
+/* --- Wishlist Item Styling (for inside profile panel) --- */
+.wishlist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  margin-bottom: 10px;
+}
+.wishlist-item p {
+  flex-grow: 1;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.wishlist-item .remove-wishlist-btn {
+  color: var(--accent);
+  cursor: pointer;
+}
+.wishlist-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+/* --- Avatar Selection Modal --- */
+.avatar-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 4, 38, 0.8);
+  backdrop-filter: blur(10px);
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+.avatar-modal-content {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--primary);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.avatar-modal-content h3 {
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+.avatar-choices {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap; /* Allow wrapping */
+  margin-bottom: 1.5rem;
+}
+.avatar-choices img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: var(--transition);
+}
+.avatar-choices img:hover {
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
+.avatar-choices img.selected {
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
+
+/* --- Maintenance Popup --- */
+.maintenance-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 4, 38, 0.8); /* Semi-transparent dark background */
+  backdrop-filter: blur(10px); /* Add a blur effect to the background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001; /* Ensure it's on top of everything */
+  animation: fadeIn 0.5s ease forwards;
+  padding: 20px;
+}
+
+.maintenance-popup {
+  /* The popup content area, not the full page background */
+  background: var(--surface); /* Use the theme's surface color for an opaque card */
+  border: 1px solid rgba(255, 45, 149, 0.4); /* Add a subtle border */
+  border-radius: var(--radius); /* Use theme's border-radius */
+  padding: 40px; /* Add padding inside the card */
+  text-align: center;
+  width: 90%;
+  max-width: 600px; /* Limit width for readability */
+  transform: scale(0.7);
+  color: var(--text);
+  animation: scaleIn 0.6s ease forwards;
+}
+
+.maintenance-popup h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.maintenance-popup p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.maintenance-btns {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+}
+
+.maintenance-btn {
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.3s;
+  background: var(--gradient); /* Use theme gradient */
+  color: var(--text);
+  box-shadow: 0 0 20px rgba(255,45,149,0.3);
+}
+
+.maintenance-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(255,45,149,0.5);
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+  </style>
+</head>
+<body>
+  
+  <header class="navbar">
+    <a href="#" class="logo">
+      <img src="assets/logo.png">
+      <span>Courses Hub</span>
+    </a>
+
+    <div class="nav-wrapper"> 
+        <!-- Maintenance Popup -->
+        <div class="maintenance-overlay" id="maintenance-popup" style="display: none;">
+          <div class="maintenance-popup">
+            <h1 id="maintenance-title">🚧 Under Maintenance</h1>
+            <p id="maintenance-body">Our website is currently under maintenance.<br>
+            We’ll be back soon – stay updated with us!</p>
+        
+            <div class="maintenance-btns">
+              <button class="maintenance-btn" onclick="window.open('https://t.me/yourchannel', '_blank')">
+                Join Telegram
+              </button>
+              <button class="maintenance-btn" onclick="exitSite()">
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <nav>
+            <a href='/'>Home</a>
+            <a href="#about">About</a>
+            <a href="#courses">Courses</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="search-container"> <a class='signin-btn' href='/login' style='text-decoration: none;'> Sign In </a>
+            <div class="profile-icon" id="profileIcon">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile">
+            </div>
+        </div>
+    </div>
+  </header>
+
+
+  <!-- Hero Section -->
+  <section class="hero">
+
+    <div class="shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
+
+    <div class="hero-image">
+     <img src="assets/logo.png" alt="Courses Hub Logo" class="hero-logo-overlay">
+    </div>
+
+    <div class="hero-content">
+      <h1>Start Growing With <span>Us For Free</span></h1>
+      <div class="typewriter"></div>
+      <div class="subtext">The skills must be free for all</div>
+      <p>Providing more than <strong>10,000+ courses</strong> with the best experienced people — absolutely free of cost, empowering every learner to grow and shine.</p>
+
+      <div class="hero-buttons">
+        <a href="https://t.me/ourcoursehub" target="_blank" class="btn btn-primary" style="text-decoration: none;"><i class="fa-solid fa-users"></i> Join Our Community</a>
+        <a href="#courses-section" class="btn btn-outline" style="text-decoration: none;"><i class="fa-solid fa-book-open"></i> Explore Courses</a>
+      </div>
+    </div>
+  </section>
+
+<section id="about" class="cw-about">
+  <div class="cw-about-inner">
+    <div class="cw-about-text">
+      <h2 class="cw-h">About Us</h2>
+      <p class="cw-sub">Our main purpose: <strong>to make you a master in your field.</strong></p>
+      <p class="cw-body">
+        At <strong>Courses Waalah</strong> we create professional, project-based lessons crafted by industry practitioners.
+        Whether you want to build sleek user interfaces, edit cinematic videos, or sharpen your mindset and soft skills —
+        our goal is to give you practical, repeatable skills that make a real difference.
+      </p>
+
+      <ul class="cw-highlights" aria-hidden="false">
+        <li><i class="fa-solid fa-check-circle"></i> Hands-on projects & real-world assignments</li>
+        <li><i class="fa-solid fa-check-circle"></i> Mentorship from experienced instructors</li>
+        <li><i class="fa-solid fa-check-circle"></i> Community support & lifetime resources</li>
+      </ul>
+
+      <div class="cw-cta-row">
+        <a class="cw-btn cw-ghost" href="/courses">Explore Courses</a>
+        <a class="cw-btn cw-primary" href="https://t.me/ourcoursehub" target="_blank">Join Our Community</a>
+      </div>
+    </div>
+
+    <div class="cw-about-slider-wrapper">
+      <div class="cw-about-cards" aria-hidden="false">
+        <!-- The content of this div will be duplicated by JavaScript for the infinite scroll effect -->
+        <!-- Card: Web Development -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop" alt="Coding course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-code"></i> Web Development</h3>
+            <p>Build modern websites with HTML, CSS, JavaScript, and popular frameworks like React and Vue.</p>
+          </div>
+        </article>
+
+        <!-- Card: App Development -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?q=80&w=1200&auto=format&fit=crop" alt="App Development course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-mobile-screen-button"></i> App Development</h3>
+            <p>Create stunning mobile applications for iOS and Android using technologies like Flutter and React Native.</p>
+          </div>
+        </article>
+
+        <!-- Card: Hacking -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1200&auto=format&fit=crop" alt="Hacking course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-user-secret"></i> Hacking</h3>
+            <p>Understand ethical hacking, penetration testing, and cybersecurity to protect digital assets from threats.</p>
+          </div>
+        </article>
+
+        <!-- Card: Editing -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="assets/video-editing.jpg" alt="Video editing course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-film"></i> Editing</h3>
+            <p>Master modern video editing tools and storytelling techniques to create professional, cinematic videos.</p>
+          </div>
+        </article>
+
+        <!-- Card: Animation -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=1200&auto=format&fit=crop" alt="Animation course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Animation</h3>
+            <p>Bring your ideas to life with 2D and 3D animation, motion graphics, and visual effects.</p>
+          </div>
+        </article>
+
+        <!-- Card: Business -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1200&auto=format&fit=crop" alt="Business course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-briefcase"></i> Business</h3>
+            <p>Learn marketing, strategy, and leadership skills to launch and grow a successful business venture.</p>
+          </div>
+        </article>
+
+        <!-- Card: Trading -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop" alt="Trading course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-chart-line"></i> Trading</h3>
+            <p>Dive into stock market analysis, cryptocurrency, and forex trading strategies to navigate financial markets.</p>
+          </div>
+        </article>
+
+        <!-- Card: Money Management -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=1200&auto=format&fit=crop" alt="Money Management course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-piggy-bank"></i> Money Management</h3>
+            <p>Master personal finance, budgeting, and investing to build long-term wealth and financial freedom.</p>
+          </div>
+        </article>
+
+        <!-- Card: Time Management -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop" alt="Self improvement course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-clock"></i> Time Management</h3>
+            <p>Boost your productivity and build effective habits with proven techniques for focus and efficiency.</p>
+          </div>
+        </article>
+
+        <!-- Card: AI & Machine Learning -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1593720213428-28a5b9e94613?q=80&w=1200&auto=format&fit=crop" alt="AI & Machine Learning course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-robot"></i> AI & Machine Learning</h3>
+            <p>Explore the future of technology with courses on neural networks, data science, and artificial intelligence.</p>
+          </div>
+        </article>
+
+        <!-- Card: Digital Marketing -->
+        <article class="cw-card">
+          <div class="cw-card-media">
+            <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=1200&auto=format&fit=crop" alt="Digital Marketing course preview">
+          </div>
+          <div class="cw-card-body">
+            <h3><i class="fa-solid fa-bullhorn"></i> Digital Marketing</h3>
+            <p>Master SEO, content strategy, and social media marketing to grow online brands effectively.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="courses-section" id="courses-section">
+  <h1 class="courses-heading">Our Courses</h1>
+  <p class="courses-subheading">Explore thousands of high-quality courses designed by experts.</p>
+
+  <!-- Search Bar -->
+  <div class="courses-search-container">
+    <i class="fa-solid fa-magnifying-glass courses-search-icon"></i>
+    <input type="text" class="courses-search-box" id="courses-search-input" placeholder="Search for any course...">
+    <div id="search-suggestions"></div>
+  </div>
+
+  <!-- Category Buttons -->
+  <div class="category-buttons">
+    <!-- This will be populated by JavaScript -->
+  </div>
+  <div class="courses-grid">
+    <!-- This will be populated by JavaScript -->
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button class="page-btn prev">←</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">4</button>
+    <button class="page-btn">5</button>
+    <button class="page-btn next">→</button>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="faq-bg">
+    <!-- Floating glowing gradient particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <h2 class="faq-heading">Frequently Asked Questions</h2>
+  <p class="faq-subheading">Your questions answered — learn more before you start your journey!</p>
+
+  <div class="faq-container">
+    <div class="faq-item">
+      <button class="faq-question">
+        What is Courses Hub?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Courses Hub is a free learning platform that provides thousands of professional-grade courses in coding, hacking, marketing, and personal development — all completely free for learners.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Are all courses really free? 
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes! Our platform believes in making skills accessible to everyone. All listed courses are completely free with zero hidden charges.</p> 
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        How can I join your community? 
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>You can join our community using the Telegram or YouTube links provided in our footer. We frequently share updates, study groups, and live events there.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Can I upload my own courses? 
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes, verified educators and experts can apply to upload their own courses by contacting our support team. We value creators who share knowledge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="contact" id="contact">
+  <h2 class="section-title">Contact <span>Us</span></h2>
+  <p class="section-subtitle">Let’s build something amazing together 🚀</p>
+
+  <div class="contact-wrapper">
+    <!-- ===== Contact Image ===== -->
+    <div class="contact-image">
+      <img src="assets/getintouch.png" alt="Get in touch with us">
+    </div>
+    
+    <!-- ===== Contact Form ===== -->
+    <form class="contact-form" id="contactForm">
+      <div class="input-group">
+        <label><i class="fa-solid fa-user"></i></label>
+        <input type="text" id="first-name" placeholder="First Name" required>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-user"></i></label>
+        <input type="text" id="last-name" placeholder="Last Name" required>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-envelope"></i></label>
+        <input type="email" id="email" placeholder="Email" required>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-comment"></i></label>
+        <textarea id="message" placeholder="Your Message" required></textarea>
+      </div>
+      <p class="note" id="form-note">Your message has been sent successfully! We'll get back to you soon. ✨</p>
+      <button type="submit" class="btn-course"><span>Send Message</span></button>
+    </form>
+  </div>
+</section>
+
+<!-- 🌌 ENHANCED FUTURISTIC FOOTER + GLASSY PRIVACY DRAWER -->
+<footer class="footer">
+  <div class="footer-divider"></div>
+
+  <div class="footer-bg">
+    <div class="glow-wave"></div>
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+  </div>
+
+  <div class="footer-container">
+    <div class="footer-about">
+      <div class="logo footer-logo">
+        <img src="assets/logo.png" alt="Courses Hub Logo" loading="lazy">
+        <span>Courses Hub</span>
+      </div>
+      <p class="footer-desc">
+        Unlock free access to 10,000+ skill-based courses in coding, trading, hacking, and personal growth.
+        Learn from top creators and industry experts.
+      </p>
+
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="https://t.me/ourcoursehub" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="http://www.youtube.com/@Spid34_boy_shorts" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+
+    <!-- New Wrapper for Site Map and Legal -->
+    <div class="footer-nav-wrapper">
+      <div class="footer-links">
+        <h3>Site Map</h3>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-legal">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="#" id="privacy-btn">Privacy Policy</a></li> 
+          <li><a href="#" id="terms-btn">Terms & Conditions</a></li>
+          <li><a href="#">Refund Policy</a></li>
+          <li><a href="#" id="team-btn">Our Team</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Courses Hub — All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- 🌌 FULLSCREEN PRIVACY DRAWER -->
+<div id="privacy-drawer">
+  <div class="drawer-glass">
+    <button class="close-drawer"><i class="fas fa-times"></i></button>
+    <h2>Privacy Policy</h2>
+    <div class="drawer-scroll">
+      <p><b>Effective Date: [11-November-2025]</b><br><b>Last Updated: [11-November-2025]</b></p>
+      <p>At Courses Hub, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our website or services.</p>
+
+      <h3>1. Information We Collect</h3>
+      <p>We may collect the following information when you use our site:</p>
+      <ul>
+        <li><b>Personal details:</b> such as your name and email address (if you register or contact us).</li>
+        <li><b>Usage data:</b> including pages visited, links clicked, and referral sources.</li>
+        <li><b>Payment information:</b> if you make a purchase, payments are processed securely through trusted third-party payment gateways. We do not store your full payment details.</li>
+      </ul>
+
+      <h3>2. How We Use Your Information</h3>
+      <p>We use your data to:</p>
+      <ul>
+        <li>Provide and improve our services</li>
+        <li>Process payments and deliver course links</li>
+        <li>Send updates, offers, or notifications (only if you opt in)</li>
+        <li>Prevent misuse or fraudulent activity</li>
+      </ul>
+
+      <h3>3. Cookies</h3>
+      <p>We use cookies and similar technologies to enhance your browsing experience. You may disable cookies through your browser settings, but some features may not work properly.</p>
+
+      <h3>4. Data Security</h3>
+      <p>We take appropriate measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.</p>
+
+      <h3>5. Third-Party Services</h3>
+      <p>Our website may include links or redirect through third-party websites or link shorteners. We are not responsible for the content, privacy practices, or security of these third-party sites.</p>
+
+      <h3>6. User Rights</h3>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access or request a copy of your stored data</li>
+        <li>Request correction or deletion of your data</li>
+        <li>Opt-out of communications anytime</li>
+      </ul>
+      <p>To exercise these rights, contact us at: gopaljibillionaire@gmail.com</p>
+
+      <h3>7. Updates to This Policy</h3>
+      <p>We may update this Privacy Policy periodically. Any changes will be posted on this page with an updated “Effective Date.”</p>
+    </div>
+  </div>
+</div>
+
+<!-- 🌌 FULLSCREEN TERMS DRAWER -->
+<div id="terms-drawer">
+  <div class="drawer-glass">
+    <button class="close-drawer"><i class="fas fa-times"></i></button>
+    <h2>Terms of Use</h2>
+    <div class="drawer-scroll">
+      <p><b>Effective Date: [11-November-2025]</b></p>
+      <p>Welcome to Courses Hub. By accessing or using our website, you agree to be bound by the following Terms of Use. If you do not agree, please do not use our services.</p>
+
+      <h3>1. Use of the Website</h3>
+      <p>You agree to use our site only for lawful purposes. You must not:</p>
+      <ul>
+        <li>Violate any applicable laws or regulations</li>
+        <li>Attempt to gain unauthorized access to any part of the site</li>
+        <li>Use our content for resale, redistribution, or commercial exploitation without permission</li>
+      </ul>
+
+      <h3>2. Course Access and Links</h3>
+      <p>Courses Hub provides access to educational content through:</p>
+      <ul>
+        <li>Free and publicly available resources</li>
+        <li>Authorized third-party sources</li>
+        <li>Discounted or promotional links</li>
+      </ul>
+      <p>We do not host or store copyrighted course materials on our servers. All content belongs to its rightful owners.</p>
+
+      <h3>3. Payment Terms</h3>
+      <p>Some features may require a small service fee (e.g., access facilitation or maintenance). All payments are processed securely through third-party payment systems. We do not store payment credentials.</p>
+
+      <h3>4. Intellectual Property</h3>
+      <p>All logos, brand names, and trademarks are property of their respective owners. Courses Hub does not claim ownership over any third-party courses or content.</p>
+
+      <h3>5. Limitation of Liability</h3>
+      <p>Courses Hub is not responsible for:</p>
+      <ul>
+        <li>Inaccuracies, delays, or interruptions in content availability</li>
+        <li>Any damages resulting from use of external links or shorteners</li>
+      </ul>
+      <p>Use the website at your own risk.</p>
+      <h3>6. Termination</h3>
+      <p>We reserve the right to suspend or terminate access to users who violate these terms or engage in fraudulent or abusive behavior.</p>
+      <h3>7. Changes to Terms</h3>
+      <p>We may update or modify these Terms at any time. Continued use of the site after updates means you accept the revised terms.</p>
+      <h3>8. Contact</h3>
+      <p>For any questions or concerns, reach us at:<br>📧 gopaljibillionaire@gmail.com<br>🌐 [your website URL]</p>
+    </div>
+  </div>
+</div>
+
+<!-- 🌌 FULLSCREEN OUR TEAM DRAWER -->
+<div id="team-drawer">
+  <div class="drawer-glass">
+    <button class="close-drawer"><i class="fas fa-times"></i></button>
+    <div class="drawer-scroll">
+        <section class="team-section" aria-labelledby="team-heading">
+            <div class="headline">
+              <div class="logo" aria-hidden="true">TW</div>
+              <div>
+                <h2 id="team-heading">⭐ Our Team</h2>
+                <p>Passionate people behind the platform — design, content, guidance and hosting.</p>
+              </div>
+            </div>
+        
+            <div class="team-grid" id="teamGrid">
+        
+              <!-- Member 1 -->
+              <article class="member" style="--delay:0.05s" tabindex="0" aria-label="Gopalji Choubey — The man who designed the website and uploaded all the courses">
+                <div class="avatar" aria-hidden="true">
+                  <i class="fa-solid fa-chess-queen" style="font-size:28px"></i>
+                </div>
+                <div class="member-info">
+                  <h3>Gopalji Choubey <span class="chip" style="margin-left:8px"><i class="fa-solid fa-crown"></i> Founder</span></h3>
+                  <p class="role">The man who designed the website and uploaded all the courses.</p>
+                  <div class="meta">
+                    <span class="chip"><i class="fa-solid fa-palette"></i> UI/UX</span>
+                    <span class="chip"><i class="fa-solid fa-upload"></i> Content Uploads</span>
+                    <span class="chip"><i class="fa-solid fa-laptop-code"></i> Frontend</span>
+                  </div>
+                </div>
+                <div class="actions" aria-hidden="true">
+                  <button class="action-btn" title="Message Gopalji"><i class="fa-regular fa-comment-dots"></i></button>
+                  <button class="action-btn" title="View profile"><i class="fa-solid fa-link"></i></button>
+                </div>
+              </article>
+        
+              <!-- Member 2 -->
+              <article class="member" style="--delay:0.12s" tabindex="0" aria-label="Aryan — The backbone of the website providing all courses">
+                <div class="avatar" aria-hidden="true">
+                  <i class="fa-solid fa-gears" style="font-size:28px"></i>
+                </div>
+                <div class="member-info">
+                  <h3>Aryan <span class="chip" style="margin-left:8px"><i class="fa-solid fa-heart"></i> Backbone</span></h3>
+                  <p class="role">The backbone of the website — it provides and maintains the course library.</p>
+                  <div class="meta">
+                    <span class="chip"><i class="fa-solid fa-database"></i> Course Ops</span>
+                    <span class="chip"><i class="fa-solid fa-sync"></i> Updates</span>
+                  </div>
+                </div>
+                <div class="actions" aria-hidden="true">
+                  <button class="action-btn" title="Message Aryan"><i class="fa-regular fa-comment-dots"></i></button>
+                  <button class="action-btn" title="View profile"><i class="fa-solid fa-link"></i></button>
+                </div>
+              </article>
+        
+              <!-- Member 3 -->
+              <article class="member" style="--delay:0.19s" tabindex="0" aria-label="Shashank — Guider who guides the website and explains features">
+                <div class="avatar" aria-hidden="true">
+                  <i class="fa-solid fa-lightbulb" style="font-size:28px"></i>
+                </div>
+                <div class="member-info">
+                  <h3>Shashank <span class="chip" style="margin-left:8px"><i class="fa-solid fa-compass"></i> Guide</span></h3>
+                  <p class="role">Guider — explains how the website works and demonstrates features.</p>
+                  <div class="meta">
+                    <span class="chip"><i class="fa-solid fa-chalkboard-teacher"></i> Tutorials</span>
+                    <span class="chip"><i class="fa-solid fa-question-circle"></i> Support</span>
+                  </div>
+                </div>
+                <div class="actions" aria-hidden="true">
+                  <button class="action-btn" title="Message Shashank"><i class="fa-regular fa-comment-dots"></i></button>
+                  <button class="action-btn" title="View profile"><i class="fa-solid fa-link"></i></button>
+                </div>
+              </article>
+        
+              <!-- Member 4 -->
+              <article class="member" style="--delay:0.26s" tabindex="0" aria-label="Ayush Mishra — Big brother who hosted the website and handled branding">
+                <div class="avatar" aria-hidden="true">
+                  <i class="fa-solid fa-rocket" style="font-size:28px"></i>
+                </div>
+                <div class="member-info">
+                  <h3>Ayush Mishra <span class="chip" style="margin-left:8px"><i class="fa-solid fa-shield-heart"></i> Host</span></h3>
+                  <p class="role">Big brother — hosted the website and handled branding across platforms.</p>
+                  <div class="meta">
+                    <span class="chip"><i class="fa-solid fa-server"></i> Hosting</span>
+                    <span class="chip"><i class="fa-solid fa-bullhorn"></i> Branding</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+        </section>
+    </div>
+  </div>
+</div>
+
+<!-- 🌌 FULL ENHANCED COURSE DETAIL PAGE -->
+<section class="course-detail" id="course-detail-page">
+  <button class="close-course-detail" id="close-course-btn"><i class="fas fa-times"></i></button>
+  <div class="course-container">
+    <div class="course-poster">
+      <img src="https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072823_1280.jpg" alt="Course Poster" loading="lazy">
+    </div>
+
+    <div class="course-info">
+      <h1 class="course-title">Mastering Frontend Development</h1>
+      <p class="course-desc">
+        Learn HTML, CSS, JavaScript, and modern frameworks to build responsive, futuristic, and high-performing websites.
+      </p>
+
+      <div class="course-meta">
+        <p><i class="fas fa-play-circle"></i> 48 Lessons</p>
+        <p><i class="fas fa-book"></i> 5 PDF Resources</p>
+        <p><i class="fas fa-tv"></i> 12 Hours Total</p>
+      </div>
+
+      <div class="vote-buttons">
+          <button class="vote-btn like-btn"><i class="fas fa-thumbs-up"></i> <span>0</span></button>
+          <button class="vote-btn dislike-btn"><i class="fas fa-thumbs-down"></i> <span>0</span></button>
+      </div>
+
+      <div class="course-pricing" style="margin-top: 1.5rem;">
+        <div><i class="fas fa-thumbs-up"></i> 2.1k</div>
+        <div><i class="fas fa-thumbs-down"></i> 120</div>
+        <div><i class="fas fa-eye"></i> 48.3k Views</div>
+        <div><i class="fas fa-star"></i> 4.8 (1,245 Ratings)</div>
+      </div>
+
+      <button class="buy-btn">Get This Course</button>
+    </div>
+  </div>
+
+  <!-- Instructor Section -->
+  <div class="instructor-section">
+    <h2>Your Instructor</h2>
+    <div class="instructor-card">
+      <img src="https://cdn.pixabay.com/photo/2016/03/26/13/09/man-1281562_960_720.jpg" alt="Instructor" loading="lazy">
+      <div>
+        <h3>Arjun Sharma <span class="verified"><i class="fas fa-check-circle"></i> Verified Mentor</span></h3>
+        <p>Frontend Engineer @ Google | 7+ years experience building real-world scalable UI systems.</p>
+        <p><i class="fas fa-users"></i> 15k Students &nbsp; | &nbsp; <i class="fas fa-video"></i> 12 Courses</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- What You'll Learn -->
+  <div class="learn-section">
+    <h2>What You’ll Learn</h2>
+    <ul>
+      <li>Build stunning, responsive websites with advanced CSS effects</li>
+      <li>Master modern JavaScript interactivity and logic</li>
+      <li>Use frameworks like React and Tailwind efficiently</li>
+      <li>Understand API integration and deployment</li>
+      <li>Launch your own professional frontend projects</li>
+    </ul>
+  </div>
+
+  <!-- Requirements -->
+  <div class="requirements">
+    <h2>Requirements</h2>
+    <ul>
+      <li>Basic understanding of computers</li>
+      <li>No coding experience required</li>
+      <li>Internet connection & curiosity to learn</li>
+    </ul>
+  </div>
+
+  <!-- Episodes -->
+  <div class="course-episodes">
+    <h2>Course Content</h2>
+    <div class="episode-list">
+      <div class="episode">
+        <span><i class="fas fa-video"></i> Episode 1: HTML Foundations</span>
+        <button class="watch-btn">Watch Now <i class="fas fa-play"></i></button>
+      </div>
+      <div class="episode">
+        <span><i class="fas fa-video"></i> Episode 2: Mastering CSS</span>
+        <button class="watch-btn">Watch Now <i class="fas fa-play"></i></button>
+      </div>
+      <div class="episode">
+        <span><i class="fas fa-video"></i> Episode 3: JavaScript Basics</span>
+        <button class="watch-btn">Watch Now <i class="fas fa-play"></i></button>
+      </div>
+      <div class="episode">
+        <span><i class="fas fa-video"></i> Episode 4: DOM Manipulation</span>
+        <button class="watch-btn">Watch Now <i class="fas fa-play"></i></button>
+      </div>
+      <div class="episode">
+        <span><i class="fas fa-file-pdf"></i> Resource 1: Developer’s Handbook</span>
+        <button class="watch-btn">Download <i class="fas fa-download"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Reviews -->
+  <div class="reviews">
+    <h2>Student Reviews</h2>
+    <div class="review-cards">
+      <div class="review-card">
+        <p>"This course completely changed my web dev journey! The mentor explains everything clearly."</p>
+        <span>- Priya Gupta ⭐⭐⭐⭐⭐</span>
+      </div>
+      <div class="review-card">
+        <p>"Absolutely worth it. The visuals and UI examples made learning super fun!"</p>
+        <span>- Rahul Mehta ⭐⭐⭐⭐☆</span>
+      </div>
+      <div class="review-card">
+        <p>"Got my first freelance project after completing this. Best investment ever!"</p>
+        <span>- Aditi Rao ⭐⭐⭐⭐⭐</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Floating Purchase Drawer -->
+<div class="buy-drawer">
+  <div class="buy-content">
+    <i class="fas fa-times close-drawer"></i>
+    <h2>Confirm Your Enrollment</h2>
+    <p>Course: <b>Mastering Frontend Development</b></p>
+    <p>Total Price: <span class="our-cost">₹999</span></p>
+    <button class="buy-btn" id="enroll-now-btn">Enroll Now</button>
+  </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center;">
+    <div id="auth-container" style="background: var(--surface); padding: 2rem; border-radius: var(--radius); border: 1px solid var(--primary); width: 90%; max-width: 400px; position: relative;">
+        <button id="close-auth-modal" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--accent); font-size: 1.5rem; cursor: pointer;">&times;</button>
+        <h2 id="auth-title" style="text-align: center; color: var(--primary); margin-bottom: 1.5rem;">Sign In</h2>
+        <form id="auth-form">
+            <div id="username-field" style="display: none; margin-bottom: 1rem;">
+                <label for="username" style="display: block; margin-bottom: 5px;">Username</label>
+                <input type="text" id="username" placeholder="Choose a username" style="width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text);">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label for="email" style="display: block; margin-bottom: 5px;">Email</label>
+                <input type="email" id="email" placeholder="your@email.com" required style="width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text);">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="password" style="display: block; margin-bottom: 5px;">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required style="width: 100%; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text);">
+            </div>
+            <button type="submit" id="auth-submit-btn" class="btn-primary" style="width: 100%; border: none;">Sign In</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+            <span id="auth-prompt-text">Don't have an account?</span>
+            <a href="#" id="auth-toggle-link" style="color: var(--accent); text-decoration: none;">Sign Up</a>
+        </p>
+        <p id="auth-error" style="color: red; text-align: center; margin-top: 1rem; display: none;"></p>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast-notification" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 1rem 2rem; border-radius: 8px; transition: bottom 0.5s ease; z-index: 10001;">
+  Toast message
+</div>
+
+<!-- Avatar Selection Modal -->
+<div id="avatar-selection-modal" class="avatar-modal">
+    <div class="avatar-modal-content">
+        <h3>Choose Your Avatar</h3>
+        <div class="avatar-choices">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Boy Avatar" data-avatar-url="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" loading="lazy">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135789.png" alt="Girl Avatar" data-avatar-url="https://cdn-icons-png.flaticon.com/512/3135/3135789.png" loading="lazy">
+        </div>
+        <button id="close-avatar-modal" class="btn-course" style="margin-top: 1rem;">Cancel</button>
+    </div>
+</div>
+
+<!-- Profile Panel -->
+<div class="profile-panel" id="profilePanel">
+    <button class="close-drawer" id="close-profile-panel" style="top: 15px; right: 20px;"><i class="fas fa-times"></i></button>
+    <div class="profile-avatar-container">
+        <img id="profile-pic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User Avatar" loading="lazy">
+        <button id="upload-avatar-btn" title="Change Avatar"><i class="fas fa-camera"></i></button>
+    </div>
+    <h3 id="profileName">Guest</h3>
+    <p id="profileEmail">guest@example.com</p>
+    <p id="profileUserId" style="color: var(--primary); font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; display: none;"></p>
+    <div class="profile-edit-group" style="width: 100%; margin-bottom: 15px;">
+        <div class="profile-tabs">
+            <button class="profile-tab-btn active" data-tab="profile-settings">Settings</button>
+            <button class="profile-tab-btn" data-tab="profile-wishlist">Wishlist</button>
+        </div>
+
+        <div id="profile-settings" class="profile-tab-content active">
+            <label for="editUsernameInput" style="color: var(--muted); font-size: 0.9rem; margin-bottom: 5px; display: block;">Change Username</label>
+            <input type="text" id="editUsernameInput" placeholder="New Username" style="width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border-color); border-radius: var(--radius); color: var(--text);">
+            <button class="btn-course profile-btn" id="saveUsernameBtn" style="margin-top: 10px; padding: 0.7rem 1.2rem;">
+                <i class="fas fa-save"></i> Save Username
+            </button>
+        </div>
+
+        <div id="profile-wishlist" class="profile-tab-content">
+            <!-- Wishlist items will be populated here by JavaScript -->
+        </div>
+    </div>
+
+    <button class="btn-course profile-btn" id="signout-btn">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+    </button>
+</div>
+
+<!-- Real-time Toast Notification Popup -->
+<div id="realtime-toast">
+    <div class="toast-content">
+        <p id="toast-text">A new course has been added!</p>
+        <div class="toast-buttons">
+            <button id="toast-read-btn">Read</button>
+            <button id="toast-close-btn">&times;</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Detail Modal -->
+<div id="notification-modal" class="avatar-modal">
+    <div class="avatar-modal-content" style="text-align: left; max-width: 500px;">
+        <h3 id="notification-modal-title" style="text-align: center;">New Course Added!</h3>
+        <p id="notification-modal-body" style="color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem;">
+            Detailed message about the new course will appear here.
+        </p>
+        <button id="notification-modal-ok-btn" class="btn-course" style="width: 100%;">Okiee</button>
+    </div>
+</div>
+
+<style>
+/* --- Real-time Toast --- */
+#realtime-toast {
+    position: fixed;
+    bottom: -100px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 30px rgba(255, 45, 149, 0.5);
+    transition: bottom 0.5s ease-in-out;
+    z-index: 10002;
+}
+#realtime-toast.show { bottom: 20px; }
+.toast-content { display: flex; align-items: center; gap: 1.5rem; }
+.toast-buttons { display: flex; gap: 0.5rem; }
+.toast-buttons button { background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 5px; padding: 5px 10px; cursor: pointer; }
+.toast-buttons #toast-close-btn { background: transparent; font-size: 1.5rem; padding: 0 5px; }
+
+/* --- Our Team Drawer Styles --- */
+#team-drawer {
+  position: fixed;
+  left: 0;
+  bottom: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 5, 30, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+  transition: bottom 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#team-drawer.active { bottom: 0; }
+
+.team-section{ max-width:1200px; margin:0 auto; padding:20px; width: 100%; }
+.headline{ display:flex; gap:18px; align-items:center; margin-bottom:18px; }
+.headline .logo{
+  width:56px; height:56px; border-radius:12px;
+  background: linear-gradient(135deg,var(--primary),var(--accent));
+  display:grid; place-items:center; font-weight:700;
+  box-shadow: 0 6px 24px rgba(6, 182, 212, 0.08);
+}
+.headline h2{ margin:0; font-size:1.6rem; letter-spacing:0.4px; }
+.headline p{ margin:0; color:var(--muted); font-size:0.95rem; }
+.team-subsection {
+  margin-top: 40px;
+}
+.team-subsection h3 {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.team-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:25px; margin-top:22px; }
+@media (max-width:1000px){ .team-grid{ grid-template-columns: 1fr; } }
+@media (max-width:620px){ .team-grid{ grid-template-columns: 1fr; } .headline{ flex-direction:column; align-items:flex-start } }
+
+.member{
+  flex-direction: column; text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius); padding:24px; display:flex; gap:14px;
+  align-items:center; border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+  transform: translateY(16px); opacity:0;
+  transition: transform .5s cubic-bezier(.2,.9,.3,1), opacity .6s ease, box-shadow .2s ease;
+  position:relative; overflow:hidden;
+}
+.member::after{
+  content:""; position:absolute; right:-40%; top:-30%; width:160%; height:120%;
+  background: radial-gradient(circle at 20% 20%, rgba(124,58,237,0.06), transparent 8%),
+              radial-gradient(circle at 80% 80%, rgba(6,182,212,0.03), transparent 8%);
+  pointer-events:none;
+}
+.member.in-view{ transform: translateY(0); opacity:1; }
+.avatar{
+  width:100px; height:100px; min-width:100px; border-radius:18px;
+  background: linear-gradient(135deg,var(--primary),var(--accent));
+  display:grid; place-items:center; font-size:28px; color:white;
+  box-shadow: 0 8px 22px rgba(9,13,25,0.6); flex-shrink:0;
+}
+.member-info{ flex:1; min-width:0; }
+.member-info h3{ margin:18px 0 8px 0; font-size:1.1rem; display:flex; align-items:center; gap:8px; justify-content: center; }
+.role{ margin:0; font-size:0.93rem; color:var(--muted); line-height:1.15; }
+.meta{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+.chip{
+  font-size:0.78rem; padding:6px 8px; border-radius:999px;
+  background:rgba(255,255,255,0.04); color:var(--muted);
+  border: 1px solid rgba(255,255,255,0.02); display:inline-flex;
+  gap:8px; align-items:center; backdrop-filter: blur(6px);
+}
+.member:hover{ transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 50px rgba(2,6,23,0.8); }
+.actions{ display:flex; gap:10px; align-items:center; }
+.action-btn{
+  border:0; background:transparent; padding:8px; border-radius:10px;
+  cursor:pointer; color:var(--muted);
+  transition: transform .18s ease, color .18s ease, background .18s ease;
+}
+.action-btn:focus{ outline:2px solid rgba(124,58,237,0.18); outline-offset:3px; }
+.action-btn:hover{ transform: translateY(-3px); color: white; background: rgba(255,255,255,0.02); }
+.member{ --delay: 0s; transition-delay: calc(var(--delay)); }
+.member.in-view{ transition-delay: 0s; }
+
+</style>
+<!-- AI Chat Styles -->
+<style>
+  #ai-launcher {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 65px; /* Slightly larger */
+    height: 65px; /* Slightly larger */
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem; /* Larger icon */
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(255, 45, 149, 0.5);
+    transition: var(--transition);
+    z-index: 999;
+  }
+  #ai-launcher:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 0 35px rgba(255, 45, 149, 0.7);
+  }
+
+  #chat-popup {
+    position: fixed;
+    left: 0;
+    bottom: -100%; /* Start off-screen */
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 5, 30, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    transition: bottom 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #chat-popup.active {
+    bottom: 0;
+  }
+
+  .chat-glass-container {
+    position: relative;
+    max-width: 700px; /* Wider for better chat experience */
+    width: 90%;
+    height: 85vh;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  #chat-window { flex-grow: 1; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; }
+  .message { padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; max-width: 80%; line-height: 1.4; }
+  .user-msg { background: var(--primary); color: white; align-self: flex-end; margin-left: auto; }
+  .bot-msg { background: rgba(255,255,255,0.1); color: var(--text); align-self: flex-start; }
+
+  #typing { display: none; padding: 10px 0; font-style: italic; color: var(--muted); }
+
+  .input-box { display: flex; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+  /* koooprompt lnnnnnnnnnnnnnddddddddddddddddddddddddddddddddddddd */
+  #suggested-prompts {
+    padding: 0 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .prompt-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--transition);
+  }
+  .prompt-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+  #user-input { flex-grow: 1; background: var(--bg-dark); border: 1px solid var(--primary); border-radius: 20px; padding: 8px 15px; color: white; outline: none; }
+  #send-btn { background: var(--accent); border: none; color: white; padding: 8px 15px; border-radius: 20px; margin-left: 10px; cursor: pointer; }
+</style>
+
+<!-- FLOATING AI BUTTON -->
+<div id="ai-launcher">
+  🤖
+</div>
+
+<!-- CHAT POPUP -->
+<div id="chat-popup"> 
+  <div class="chat-glass-container">
+    <button class="close-drawer" id="close-chat"><i class="fas fa-times"></i></button>
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 1rem;">Laura — Your AI Guide</h2>
+
+    <div id="chat-window">
+      <!-- Messages will appear here -->
+    </div>
+
+    <div id="suggested-prompts">
+      <button class="prompt-btn">What is Courses Waalah?</button>
+      <button class="prompt-btn">How do I get a course?</button>
+      <button class="prompt-btnhfyheyc fhudjveekf jjfuck/button>
+      <button class="prompt-btn">How can I use this website?</button>
+      <button class="prompt-btn">How do I find the content I need?</button>
+      <button class="prompt-btn">How do I create an account?</button>
+    </div>
+
+    <div id="typing">Laura is typing...</div>
+
+    <div class="input-box">
+      <input id="user-input" placeholder="Ask me anything about Courses Waalah..." />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Typewriter effect
+    const texts = ["Coding", "Hacking", "Trading", "Self Development", "Time Management"];
+    let count = 0;
+    let index = 0;
+    let currentText = "";
+    let letter = "";
+    const typeWriterElement = document.querySelector(".typewriter");
+ 
+
+    function type() {
+      if (count === texts.length) count = 0;
+      currentText = texts[count];
+      letter = currentText.slice(0, ++index);
+      typeWriterElement.textContent = "Get courses like " + letter;
+      if (letter.length === currentText.length) { setTimeout(() => { index = 0; count++; type(); }, 1500); } else { setTimeout(type, 100); }
+    }
+    type();
+
+    // --- Maintenance Mode Check ---
+    async function checkMaintenanceMode() { // Fetches maintenance data from Supabase
+      const { data, error } = await sb
+        .from('maintenance')
+        .select('is_active, heading, message, telegram_link') // Fetch the telegram_link as well
+        .eq('id', 1)
+        .single();
+
+      if (error) {
+        console.error('Error checking maintenance status:', error);
+        return;
+      }
+
+      if (data && data.is_active) {
+        const popup = document.getElementById('maintenance-popup');
+        const titleEl = document.getElementById('maintenance-title');
+        const bodyEl = document.getElementById('maintenance-body');
+        const telegramBtn = document.querySelector('.maintenance-btn[onclick*="telegram"]');
+
+        // Update popup content from database
+        if (data.heading) titleEl.innerHTML = data.heading;
+        if (data.message) bodyEl.innerHTML = data.message;
+        if (data.telegram_link && telegramBtn) {
+            telegramBtn.onclick = () => window.open(data.telegram_link, '_blank');
+        }
+
+        popup.style.display = 'flex'; // Show the popup
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+      }
+    }
+
+    function exitSite() {
+      window.close(); // Attempts to close the window/tab
+    }
+
+    // --- Supabase Setup ---
+    const SUPABASE_URL = 'https://yspxrgqruwtuismwutil.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzcHhyZ3FydXd0dWlzbXd1dGlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTc5MjAsImV4cCI6MjA3ODI3MzkyMH0.tF-0tsT2pxTbf3eVEagjqvFLWIJP832H9aOOhwpvv2s';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        persistSession: true,
+        aufuchktoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+    let currentUser = null;
+    let isInitialLoad = true; // Flag to prevent toast on first load
+
+    // --- Global 24-Hour Access Expiration Check ---
+    async function checkAllCourseExpirations() {
+        let expired = false;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('courseAccess_')) {
+                const accessGrantTime = localStorage.getItem(key);
+                const now = new Date().getTime();
+                const hoursPassed = (now - accessGrantTime) / (1000 * 60 * 60);
+
+                if (hoursPassed > 24) {
+                    localStorage.removeItem(key); // Clean up expired key
+                    expired = true;
+                }
+            }
+        }
+        if (expired) {
+            await sb.auth.signOut();
+            alert("Your 24-hour course access has expired. Please sign in and generate a new key.");
+            window.location.href = 'login.html';
+        }
+    }
+    // Contact Form
+
+    // --- Dynamic Content Loading from Supabase ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check for maintenance mode first
+        checkMaintenanceMode();
+
+        // First, check the user's session to see if they are logged in.
+        checkUserSession().then(() => { checkAllCourseExpirations(); // Check for expired 24hr access // After session check is complete, load all page content. loadTrendingCourses(); loadAllCourses(); loadCategories(); setupCourseSearch(); setupFaqAccordion(); setupContactForm(); setupDrawers(); isInitialLoad = false; // After initial setup, set to false setupProfileEdit();
+            loadTrendingCourses();
+            loadAllCourses();
+            loadCategories();
+            setupCourseSearch();
+            setupFaqAccordion();
+            setupContactForm();
+            setupDrawers();
+            isInitialLoad = false; // After initial setup, set to false
+            setupProfileEdit();
+        });
+        setupAuthListeners();
+
+        // --- Auto-scrolling slider setup ---
+        const slider = document.querySelector(".cw-about-cards");
+        if (slider) {
+            const sliderContent = slider.innerHTML;
+            slider.innerHTML += sliderContent; // Duplicate content for seamless loop
+        }
+
+        setupProfileTabs();
+
+        // **RELIABLE FIX**: Attach the avatar modal listener directly on DOMContentLoaded.
+        // This ensures the button works regardless of session check timing.
+        const changeProfileBtn = document.getElementById('upload-avatar-btn'); // This is the camera button
+        const avatarModal = document.getElementById('avatar-selection-modal');
+        if (changeProfileBtn && avatarModal) {
+            changeProfileBtn.addEventListener('click', () => {
+                if (!currentUser) { showToast('Please sign in to change your avatar.'); return; }
+                avatarModal.style.display = 'flex';
+                document.body.classList.add('no-scroll');
+            });
+        }
+    });
+    const createSkeletonCard = () => `
+        <div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-content">
+                <div class="skeleton-line h3"></div>
+                <div class="skeleton-line p"></div>
+                <div class="skeleton-line p short"></div>
+                <div class="skeleton-line instructor"></div>
+                <div class="skeleton-line stats"></div>
+                <div class="skeleton-line price"></div>
+                <div class="skeleton-line button"></div>
+            </div>
+        </div>
+    `;
+
+    const createCourseCard = (course) => {
+        // Default access_type to '24hr' if it's null or undefined for backward compatibility
+        const accessType = course.access_type || '24hr';
+
+        return `
+            <div class="course-card" data-category-id="${course.category_id}" data-course-id="${course.id}" data-access-type="${accessType}" style="display: none;">
+                <button class="wishlist-btn-card" title="Add to Wishlist"><i class="fas fa-heart"></i></button>
+                <img src="${course.poster_url || 'assets/logo.png'}" alt="${course.title}" loading="lazy" />
+                <div class="course-content">
+                    <h3>${course.title}</h3>
+                    <p>${course.description.substring(0, 80)}...</p>
+                    <div class="instructor"><i class="fa-solid fa-user-tie"></i> By ${course.instructor_name || 'N/A'}</div>
+                    <div class="stats">
+                        <span><i class="fa-solid fa-video"></i> ${course.total_lessons || 0} Lessons</span>
+                        <span><i class="fa-solid fa-language"></i> ${course.language || 'N/A'}</span>
+                        <span><i class="fa-solid fa-thumbs-up"></i> ${course.likes || 0}</span>
+                        <span><i class="fa-solid fa-thumbs-down"></i> ${course.dislikes || 0}</span>
+                    </div>
+                    <div class="price">
+                        ${course.real_price ? `<span class="fake">${course.real_price}</span>` : ''}
+                        <span class="real">${course.our_price || 'Free'}</span>
+                    </div>
+                    <button class="btn-course timer-btn">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                        <span class="timer-countdown"></span>
+                    </button>
+                    <button class="btn-course"><span>Get The Course</span></button>
+                </div>
+            </div>
+        `;
+    };
+
+   
+    async function loadTrendingCourses() {
+        const container = document.querySelector('.trending .course-container');
+        container.innerHTML = Array(3).fill(createSkeletonCard()).join('');
+        
+        const { data, error } = await sb
+            .from('movies')
+            .select('*, episodes(count)')
+            .eq('is_visible', true)
+            .order('views', { ascending: false }) // Assuming 'views' column exists
+            .limit(3);
+
+        if (error) {
+            container.innerHTML = `<p>Error loading courses: ${error.message}</p>`;
+            return;
+        }
+
+        container.innerHTML = data.map(course => {
+            course.episodes_count = course.episodes[0]?.count || 0;
+            return createCourseCard(course);
+        }).join('');
+        
+        // Fade in the real cards
+        container.querySelectorAll('.course-card').forEach(card => card.style.display = 'block');
+        addCourseCardListeners();
+        updateCardsForActiveAccess();
+    }
+
+    async function loadAllCourses(page = 1, searchQuery = '', categoryId = 'all') {
+        const container = document.querySelector('.courses-section .courses-grid');
+        container.innerHTML = Array(6).fill(createSkeletonCard()).join('');
+        
+        const coursesPerPage = 6;
+        const from = (page - 1) * coursesPerPage;
+        const to = from + coursesPerPage - 1;
+
+        let query = sb
+            .from('movies')
+            .select('*, episodes(count)', { count: 'exact' })
+            .eq('is_visible', true);
+
+        if (searchQuery) {
+            query = query.ilike('title', `%${searchQuery}%`);
+        }
+        if (categoryId !== 'all') {
+            query = query.eq('category_id', categoryId);
+        }
+
+        const { data, error, count } = await query
+            .order('created_at', { ascending: false })
+            .range(from, to);
+
+        if (error) {
+            container.innerHTML = `<p>Error loading courses: ${error.message}</p>`;
+            return;
+        }
+
+        // Display the fetched courses for the current page
+        container.innerHTML = data.map(course => {
+            course.episodes_count = course.episodes[0]?.count || 0;
+            return createCourseCard(course);
+        }).join('');
+        container.querySelectorAll('.course-card').forEach(card => card.style.display = 'block');
+        addCourseCardListeners();
+        updateCardsForActiveAccess();
+
+        // Pagination setup
+        setupPagination(count, coursesPerPage, page, (newPage) => {
+            loadAllCourses(newPage, searchQuery, categoryId);
+        });
+    }
+
+    async function loadCategories() {
+        const container = document.querySelector('.category-buttons');        
+        // 1. Fetch all visible courses and their category IDs
+        const { data: courses, error: courseError } = await sb
+            .from('movies')
+            .select('category_id')
+            .eq('is_visible', true)
+            .not('category_id', 'is', null);
+
+        if (courseError) return;
+
+        // 2. Get a unique list of category IDs that are actually in use
+        const usedCategoryIds = [...new Set(courses.map(c => c.category_id))];
+
+        // 3. Fetch the names for only those used categories
+        const { data: categories, error: catError } = await sb.from('categories').select('id, name').in('id', usedCategoryIds);
+
+        if (catError) return;
+
+        container.innerHTML = '<button class="cat-btn active" data-filter="all">All</button>' + categories.map(cat => `<button class="cat-btn" data-filter="${cat.id}">${cat.name}</button>`).join('');
+        addCategoryFilterListeners();
+    }
+
+     // Pagination
+    function setupPagination(totalItems, itemsPerPage, currentPage, onPageChange) {
+        const paginationContainer = document.querySelector('.courses-section .pagination');
+        paginationContainer.innerHTML = ''; // Clear existing buttons
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        const prevButton = document.createElement('button');
+        prevButton.className = 'page-btn prev';
+        prevButton.textContent = '←';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => onPageChange(currentPage - 1));
+        paginationContainer.appendChild(prevButton);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.className = 'page-btn';
+            pageButton.textContent = i;
+            if (i === currentPage) pageButton.classList.add('active');
+            pageButton.addEventListener('click', () => onPageChange(i));
+            paginationContainer.appendChild(pageButton);
+        }
+
+        const nextButton = document.createElement('button');
+        nextButton.className = 'page-btn next';
+        nextButton.textContent = '→';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', () => onPageChange(currentPage + 1));
+        paginationContainer.appendChild(nextButton);
+    }
+
+
+    function addCategoryFilterListeners() {
+        const categoryBtns = document.querySelectorAll('.cat-btn');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const categoryId = btn.dataset.filter;
+                const currentSearch = document.getElementById('courses-search-input').value.trim();
+                loadAllCourses(1, currentSearch, categoryId);
+            });
+        });
+    }
+
+    function setupCourseSearch() {
+        const searchInput = document.getElementById('courses-search-input');
+        const suggestionsContainer = document.getElementById('search-suggestions');
+
+        searchInput.addEventListener('input', async () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+
+            if (searchTerm.length < 2) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+
+            const { data, error } = await sb
+                .from('movies')
+                .select('id, title, poster_url')
+                .ilike('title', `%${searchTerm}%`)
+                .eq('is_visible', true)
+                .limit(5);
+
+            if (error || !data || data.length === 0) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+
+            suggestionsContainer.innerHTML = data.map(course => `
+                <div class="suggestion-item" data-course-id="${course.id}">
+                    <img src="${course.poster_url || 'assets/logo.png'}" alt="${course.title}" loading="lazy">
+                    <p>${course.title}</p>
+                </div>
+            `).join('');
+
+            suggestionsContainer.style.display = 'block';
+        });
+
+        suggestionsContainer.addEventListener('click', (e) => {
+            const suggestionItem = e.target.closest('.suggestion-item');
+            if (suggestionItem) {
+                const courseId = suggestionItem.dataset.courseId;
+                showCourseDetail(courseId);
+                suggestionsContainer.style.display = 'none';
+                searchInput.value = '';
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+                suggestionsContainer.style.display = 'none';
+            }
+        });
+    }
+    
+    function setupFaqAccordion() {
+        const faqItems = document.querySelectorAll(".faq-item");
+        faqItems.forEach(item => {
+            const btn = item.querySelector(".faq-question");
+            btn.addEventListener("click", () => item.classList.toggle("active"));
+        });
+    }
+
+    function setupContactForm() {
+        const form = document.getElementById('contactForm');
+        if (!form) return;
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const note = document.getElementById('form-note');
+            note.style.display = 'block';
+            form.reset();
+
+            setTimeout(() => {
+                note.style.display = 'none';
+            }, 5000);
+        });
+    }
+
+    // --- Event Listeners for Course Cards ---
+    function addCourseCardListeners() {
+        const courseBtns = document.querySelectorAll('.course-card .btn-course:not(.timer-btn)');
+        const timerBtns = document.querySelectorAll('.course-card .timer-btn');
+        const wishlistBtns = document.querySelectorAll('.course-card .wishlist-btn-card');
+        courseBtns.forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent card click when clicking the button
+                if (currentUser) {
+                    const card = button.closest('.course-card');
+                    const courseId = card.dataset.courseId;
+                    // For '24hr' access, go to the key generation page
+                    window.location.href = `accesskeygeneration.html?courseId=${courseId}`;
+                } else {
+                    // If user is not logged in, show a message and redirect to the login page
+                    showToast('Please sign in to view the course.');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500); // Give user time to see the toast
+                }
+            });
+        });
+
+        timerBtns.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click when clicking the button
+                const card = e.target.closest('.course-card');
+                const courseId = card.dataset.courseId;
+                window.location.href = `course-getting.html?courseId=${courseId}`;
+            });
+        });
+
+        wishlistBtns.forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevent card click when clicking the button
+                if (!currentUser) {
+                    showToast('Please sign in to add to wishlist.');
+                    return;
+                }
+                const card = e.target.closest('.course-card');
+                const courseId = card.dataset.courseId;
+                
+                // Toggle active state immediately for better UX and then handle DB
+                await toggleWishlist(courseId);
+            });
+        });
+
+        // Add listener for the entire card to go to the course detail page
+        document.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const courseId = card.dataset.courseId;
+                if (currentUser) {
+                    window.location.href = `accesskeygeneration.html?courseId=${courseId}`;
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    }
+
+    // --- Active Access Timer Logic ---
+    let cardTimers = {}; // To store intervals
+
+    function updateCardsForActiveAccess() {
+        document.querySelectorAll('.course-card').forEach(card => {
+            const courseId = card.dataset.courseId;
+            const accessGrantTime = localStorage.getItem(`courseAccess_${courseId}`);
+
+            if (accessGrantTime) {
+                const getCourseBtn = card.querySelector('.btn-course:not(.timer-btn)');
+                const timerBtn = card.querySelector('.timer-btn');
+                getCourseBtn.style.display = 'none';
+                timerBtn.style.display = 'inline-block';
+
+                // Clear any existing timer for this card before starting a new one
+                if (cardTimers[courseId]) {
+                    clearInterval(cardTimers[courseId]);
+                }
+
+                // Start a new timer
+                cardTimers[courseId] = setInterval(() => {
+                    updateCardTimer(card, accessGrantTime);
+                }, 1000);
+                updateCardTimer(card, accessGrantTime); // Initial call
+            }
+            else { // Ensure buttons are in the correct default state if no access key is found
+                card.querySelector('.btn-course:not(.timer-btn)').style.display = 'inline-block';
+                card.querySelector('.timer-btn').style.display = 'none';
+            }
+        });
+    }
+
+    function updateCardTimer(card, grantTime) {
+        const courseId = card.dataset.courseId;
+        const expirationTime = Number(grantTime) + (24 * 60 * 60 * 1000);
+        const remaining = expirationTime - new Date().getTime();
+        const timerEl = card.querySelector('.timer-countdown');
+
+        if (remaining > 0) {
+            const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+            const minutes = Math.floor((remaining / (1000 * 60)) % 60).toString().padStart(2, '0');
+            const seconds = Math.floor((remaining / 1000) % 60).toString().padStart(2, '0');
+            timerEl.textContent = `${hours}:${minutes}:${seconds}`;
+        } else {
+            // Timer expired, revert the card
+            clearInterval(cardTimers[courseId]);
+            localStorage.removeItem(`courseAccess_${courseId}`);
+            card.querySelector('.btn-course:not(.timer-btn)').style.display = 'inline-block';
+            card.querySelector('.timer-btn').style.display = 'none';
+        }
+    }
+
+
+    // --- Course Detail Page Logic ---
+    async function showCourseDetail(courseId) {
+        const { data: course, error } = await sb
+            .from('movies')
+            .select('*, episodes(*), instructor_photo_url, instructor_bio')
+            .eq('id', courseId)
+            .single();
+
+        if (error) {
+            alert(`Error: ${error.message}`);
+            return;
+        }
+
+        // --- Populate Course Detail Page ---
+        const detailPage = document.getElementById('course-detail-page');
+        detailPage.querySelector('.course-title').textContent = course.title;
+        detailPage.querySelector('.course-desc').textContent = course.description;
+        detailPage.querySelector('.course-meta').innerHTML = `
+            <p><i class="fas fa-play-circle"></i> ${course.episodes.length} Lessons</p>
+            <p><i class="fas fa-eye"></i> ${course.views || 0} Views</p>
+            <p><i class="fas fa-star"></i> 4.8 (1,245 Ratings)</p>
+        `;
+
+        detailPage.querySelector('.course-poster img').src = course.poster_url || 'https://via.placeholder.com/400x250';
+        detailPage.querySelector('.real-cost').textContent = course.real_price || '';
+        detailPage.querySelector('.our-cost').innerHTML = `${course.our_price || 'Free'} <span>Our Price</span>`;
+        
+        // Instructor
+        const buyBtn = detailPage.querySelector('.buy-btn');
+        buyBtn.onclick = async () => {
+            window.location.href = `accesskeygeneration.html?courseId=${course.id}`;
+        };
+
+        detailPage.querySelector('.instructor-card img').src = course.instructor_photo_url || 'https://via.placeholder.com/100';
+        detailPage.querySelector('.instructor-card h3').innerHTML = `${course.instructor_name || 'N/A'} <span class="verified"><i class="fas fa-check-circle"></i> Verified Mentor</span>`;
+        detailPage.querySelector('.instructor-card p').textContent = course.instructor_bio || '';
+
+        // What you'll learn & Requirements
+
+        const learnList = detailPage.querySelector('.learn-section ul');
+        learnList.innerHTML = (course.what_you_will_learn || []).map(item => `<li>${item}</li>`).join('');
+        const reqList = detailPage.querySelector('.requirements ul');
+        reqList.innerHTML = (course.requirements || []).map(item => `<li>${item}</li>`).join('');
+
+        // Episodes
+        const episodeList = detailPage.querySelector('.episode-list');
+        
+        // Generate signed URLs for each episode
+        const episodePromises = course.episodes.sort((a, b) => a.episode_number - b.episode_number).map(async (ep) => {
+            let videoUrl = ep.video_url || ep.video_url_m3u8;
+            if (videoUrl && videoUrl.startsWith('videos/')) { // Check if it's a Supabase storage path
+                const { data, error } = await sb.storage
+                    .from('courses') // Assuming your bucket is named 'courses'
+                    .createSignedUrl(videoUrl, 3600); // 3600 seconds = 1 hour
+
+                if (!error && data) {
+                    videoUrl = data.signedUrl;
+                } else {
+                    console.error('Error creating signed URL for', videoUrl, error);
+                    videoUrl = '#'; // In case of error, make the link invalid
+                }
+            }
+            return `
+                <div class="episode">
+                    <span><i class="fas fa-video"></i> Episode ${ep.episode_number}: ${ep.title}</span>
+                    <button class="watch-btn" onclick="playEpisode('${videoUrl}', 'Episode ${ep.episode_number}: ${ep.title}')">Watch Now <i class="fas fa-play"></i></button>
+                </div>
+            `;
+        });
+
+        episodeList.innerHTML = (await Promise.all(episodePromises)).join('');
+
+        // --- Increment View & Handle Votes ---
+        await sb.rpc('increment_views', { course_id_to_update: courseId });
+        setupVoteButtons(courseId, detailPage);
+        setupVoteButtons(courseId, detailPage);
+
+        // --- Show the page ---
+        const sectionsToHide = document.querySelectorAll('section:not(#course-detail-page), footer');
+        sectionsToHide.forEach(section => section.style.display = 'none');
+        detailPage.style.display = 'block';
+        updateWishlistIcons();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Add listener for the new close video player button
+        document.getElementById('close-video-player').addEventListener('click', () => {
+            const playerContainer = document.getElementById('video-player-container');
+            const videoPlayer = document.getElementById('episode-video-player');
+            playerContainer.style.display = 'none';
+            videoPlayer.pause();
+            videoPlayer.src = '';
+        });
+    }
+
+    async function handleCourseAccess(course) {
+        // This function will determine what to do when "Get This Course" is clicked
+        // based on the course's access_type.
+
+        const accessType = course.access_type || '24hr'; // Default to 24hr if not set
+
+        if (accessType === 'paid') {
+            // Redirect to the payment page, passing course ID and price
+            const price = course.payment_price;
+            window.location.href = `payment.html?courseId=${course.id}&price=${price}`;
+        } else { // '24hr' or any other free type
+            // Redirect to the 24-hour access key generation page
+            window.location.href = `accesskeygeneration.html?courseId=${course.id}`;
+        }
+
+        // Check user's current vote
+        if (currentUser) {
+            const { data: userVote } = await sb.from('course_votes').select('vote_type').eq('course_id', courseId).eq('user_id', currentUser.id).single();
+            likeBtn.classList.toggle('active', userVote?.vote_type === 'like');
+            dislikeBtn.classList.toggle('active', userVote?.vote_type === 'dislike');
+        }
+
+        const handleVoteClick = async (voteType) => {
+            if (!currentUser) {
+                showToast('Please sign in to vote!');
+                openAuthModal();
+                return;
+            }
+            // Disable buttons to prevent spam
+            likeBtn.disabled = true;
+            dislikeBtn.disabled = true;
+
+            await sb.rpc('handle_vote', { course_id_to_vote: courseId, vote_type_arg: voteType });
+            
+            // Re-enable buttons after a short delay
+            setTimeout(() => {
+                likeBtn.disabled = false;
+                dislikeBtn.disabled = false;
+            }, 1000);
+        };
+
+        likeBtn.onclick = () => handleVoteClick('like');
+        dislikeBtn.onclick = () => handleVoteClick('dislike');
+
+        // Listen for real-time changes
+        sb.channel(`course-votes-${courseId}`)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'movies', filter: `id=eq.${courseId}` }, payload => {
+                const newCounts = payload.new;
+                likeCountSpan.textContent = newCounts.likes || 0;
+                dislikeCountSpan.textContent = newCounts.dislikes || 0;
+
+                // Also update the user's button state
+                 if (currentUser) {
+                    sb.from('course_votes').select('vote_type').eq('course_id', courseId).eq('user_id', currentUser.id).single().then(({data}) => {
+                        likeBtn.classList.toggle('active', data?.vote_type === 'like');
+                        dislikeBtn.classList.toggle('active', data?.vote_type === 'dislike');
+                    });
+                }
+            })
+            .subscribe();
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast-notification');
+        toast.textContent = message;
+        toast.style.bottom = '20px';
+        setTimeout(() => {
+            toast.style.bottom = '-100px';
+        }, 3000);
+    }
+
+    // --- Auth ---
+    async function checkUserSession() {
+        return new Promise(resolve => {
+            sb.auth.getSession().then(({ data: { session } }) => {
+                currentUser = session?.user;
+                updateUserUI(null, true); // Initial UI update without toast
+                resolve(); // Resolve the promise after the initial session check
+            });
+
+            sb.auth.onAuthStateChange((event, session) => {
+                currentUser = session?.user;
+                const message = event === 'SIGNED_IN' ? 'Signed in successfully!' : (event === 'SIGNED_OUT' ? 'You have been signed out.' : null);
+                updateUserUI(message);
+
+                // If user signs in or out, reload dynamic content
+                if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+                    loadTrendingCourses();
+            // loadAllCourses is already called inside setupPagination which is called by loadAllCourses, so this is fine.
+                    loadAllCourses();
+                    updateWishlistIcons();
+                    updateCardsForActiveAccess();
+                }
+            });
+        });
+
+    }
+
+    function updateUserUI(toastMessage = null) {
+        const signInBtn = document.querySelector('.signin-btn');
+        const profileIcon = document.getElementById('profileIcon'); // This is the element to show/hide
+        const profilePic = document.getElementById('profile-pic');
+        const profileNavPic = profileIcon.querySelector('img');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const editUsernameInput = document.getElementById('editUsernameInput');
+        const profileUserId = document.getElementById('profileUserId');
+
+        if (currentUser) {
+            signInBtn.style.display = 'none'; // Hide Sign In button
+            profileIcon.style.display = 'flex'; // Show profile icon
+
+            const username = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
+            profileName.textContent = username;
+            profileEmail.textContent = currentUser.email;
+            editUsernameInput.value = username; // Populate edit field
+
+            // Fetch profile to get avatar_url and permanent_user_id
+            sb.from('profiles').select('permanent_user_id').eq('id', currentUser.id).single().then(({ data, error }) => {
+                if (data && data.permanent_user_id) {
+                    profileUserId.textContent = `ID: ${data.permanent_user_id}`;
+                    profileUserId.style.display = 'block';
+                }
+            });
+
+            // Set avatar from user_metadata
+            const avatarUrl = currentUser.user_metadata?.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+            profilePic.src = avatarUrl;
+            profileNavPic.src = avatarUrl;
+
+        } else {
+            signInBtn.style.display = 'flex';
+            profileIcon.style.display = 'none';
+            editUsernameInput.value = ''; // Clear edit field
+            profileName.textContent = 'Guest';
+            profileEmail.textContent = 'guest@example.com';
+            profileUserId.style.display = 'none';
+            document.getElementById('profilePanel').classList.remove('active');
+        }
+
+        if (toastMessage && !isInitialLoad) {
+            showToast(toastMessage);
+        }
+    }
+
+    // Auth form logic
+    const authForm = document.getElementById('auth-form');
+    const authToggleLink = document.getElementById('auth-toggle-link');
+    const authTitle = document.getElementById('auth-title');
+    const authSubmitBtn = document.getElementById('auth-submit-btn');
+    const usernameField = document.getElementById('username-field');
+    const authPromptText = document.getElementById('auth-prompt-text');
+    const authError = document.getElementById('auth-error');
+    let isSignUp = false;
+
+    const toggleAuthMode = (e) => { 
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        authTitle.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+        authSubmitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+        usernameField.style.display = isSignUp ? 'block' : 'none';
+        authPromptText.textContent = isSignUp ? 'Already have an account?' : "Don't have an account?";
+        authToggleLink.textContent = isSignUp ? 'Sign In' : 'Sign Up';
+        authError.style.display = 'none';
+    };
+
+    const handleAuthSubmit = async (e) => {
+        e.preventDefault();
+        authError.style.display = 'none';
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (isSignUp) {
+            const username = document.getElementById('username').value;
+
+            const { data, error } = await sb.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { username: username }
+                }
+            });
+
+            if (error) {
+                authError.textContent = error.message;
+                authError.style.display = 'block';
+            } else {
+                document.getElementById('auth-modal').style.display = 'none';
+                showToast('Success! Please check your email to verify your account.');
+            }
+        } else { // Sign In
+
+            const { data, error } = await sb.auth.signInWithPassword({ email, password });
+            if (error) {
+                authError.textContent = error.message;
+                authError.style.display = 'block';
+            } else {
+                document.getElementById('auth-modal').style.display = 'none';
+                showToast('Signed in successfully!');
+            }
+        }
+    };
+
+    function setupAuthListeners() {
+        // The sign-in button is now a link, so the modal logic is no longer needed here.
+        // If you still have other buttons that should open the modal, their listeners would go here.
+        // document.querySelector('.some-other-button').addEventListener('click', () => openAuthModal(false));
+        
+        document.getElementById('close-auth-modal').addEventListener('click', () => {
+            if (document.getElementById('auth-modal'))
+            document.getElementById('auth-modal').style.display = 'none';
+        });
+
+        authToggleLink.addEventListener('click', toggleAuthMode);
+        authForm.addEventListener('submit', handleAuthSubmit);
+    }
+
+    // Make the close button work
+    document.getElementById('close-course-btn').addEventListener('click', () => {
+        document.getElementById('course-detail-page').style.display = 'none';
+        const sectionsToShow = document.querySelectorAll('section:not(#course-detail-page), footer');
+        updateWishlistIcons();
+        sectionsToShow.forEach(section => section.style.display = ''); // Reset display
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // --- Consolidated Drawer & Popup Logic ---
+    const setupDrawers = () => {
+      // Privacy Policy Drawer
+      const privacyBtn = document.getElementById('privacy-btn');
+      const privacyDrawer = document.getElementById('privacy-drawer');
+      const privacyCloseBtn = privacyDrawer.querySelector('.close-drawer');
+      privacyBtn.addEventListener('click', (e) => {
+        e.preventDefault(); // Keep this to prevent the link from navigating
+        privacyDrawer.classList.add('active');
+        document.body.classList.add('no-scroll');
+      });
+      privacyCloseBtn.addEventListener('click', () => {
+        privacyDrawer.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+      });
+
+      // Terms of Use Drawer
+      const termsBtn = document.getElementById('terms-btn');
+      const termsDrawer = document.getElementById('terms-drawer');
+      const termsCloseBtn = termsDrawer.querySelector('.close-drawer');
+      termsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        termsDrawer.classList.add('active');
+        document.body.classList.add('no-scroll');
+      });
+      termsCloseBtn.addEventListener('click', () => {
+        termsDrawer.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+      });
+
+      // Our Team Drawer
+      const teamBtn = document.getElementById('team-btn');
+      const teamDrawer = document.getElementById('team-drawer');
+      if (teamBtn && teamDrawer) {
+        const teamCloseBtn = teamDrawer.querySelector('.close-drawer');
+        teamBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            teamDrawer.classList.add('active');
+            document.body.classList.add('no-scroll');
+            // Trigger the animation for team members when drawer opens
+            const items = teamDrawer.querySelectorAll('.member');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, root: teamDrawer.querySelector('.drawer-scroll') });
+            items.forEach(item => io.observe(item));
+        });
+        teamCloseBtn.addEventListener('click', () => {
+            teamDrawer.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        });
+      }
+
+      // Buy (Enroll) Drawer
+      const buyDrawer = document.querySelector('.buy-drawer');
+      const buyDrawerCloseBtn = buyDrawer.querySelector('.close-drawer');
+      buyDrawerCloseBtn.addEventListener('click', () => {
+        buyDrawer.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+      });
+
+      // Profile Panel Logic
+      const profileIcon = document.getElementById('profileIcon');
+      const profilePanel = document.getElementById('profilePanel');
+      profileIcon.addEventListener('click', () => {
+          profilePanel.classList.toggle('active');
+          document.body.classList.toggle('no-scroll', profilePanel.classList.contains('active'));
+      });
+
+      // Close Profile Panel
+      document.getElementById('close-profile-panel').addEventListener('click', () => {
+          profilePanel.classList.remove('active');
+          document.body.classList.remove('no-scroll');
+      });
+
+
+      // Sign Out Button in Profile Panel
+      document.getElementById('signout-btn').addEventListener('click', async () => {
+          await sb.auth.signOut();
+          // The onAuthStateChange listener will handle the UI update and toast
+      });
+
+      // Avatar Upload Logic
+      setupAvatarModal();
+    };
+    
+    // --- Notification Panel Logic ---
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationPanel = document.getElementById('notificationPanel');
+    const closeNotificationPanelBtn = document.getElementById('close-notification-panel');
+    const notificationDot = document.getElementById('notificationDot');
+    let notificationsLoaded = false; // Flag to prevent multiple loads
+
+    notificationIcon.addEventListener('click', () => {
+        notificationPanel.classList.add('active');
+        document.body.classList.add('no-scroll');
+        notificationDot.style.display = 'none'; // Hide dot when panel is opened
+    });
+
+    notificationIcon.addEventListener('click', () => {
+        if (!notificationsLoaded) loadNotifications();
+    });
+
+    closeNotificationPanelBtn.addEventListener('click', () => {
+        notificationPanel.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+    });
+
+    // Close panel if clicking outside of it
+    document.addEventListener('click', (e) => {
+        if (!notificationPanel.contains(e.target) && !notificationIcon.contains(e.target)) {
+            notificationPanel.classList.remove('active');
+        }
+    });
+    // --- Profile Panel Tabs Logic ---
+    let timerInterval = null;
+
+    const setupProfileTabs = () => {
+        const tabButtons = document.querySelectorAll('.profile-tab-btn');
+        const tabContents = document.querySelectorAll('.profile-tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const tabId = button.dataset.tab;
+                tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === tabId);
+                });
+
+                // Specifically call loadWishlist when that tab is clicked
+                if (tabId === 'profile-wishlist') {
+                    loadWishlist();
+                }
+            });
+        });
+    };
+
+    // New function to update heart icons on page load
+    const updateWishlistIcons = async () => {
+        if (!currentUser) return;
+
+        const { data: wishlistItems, error } = await sb
+            .from('wishlist')
+            .select('course_id')
+            .eq('user_id', currentUser.id);
+
+        if (error || !wishlistItems) return;
+
+        const wishlistIds = new Set(wishlistItems.map(item => item.course_id));
+
+        document.querySelectorAll('.course-card').forEach(card => {
+            const courseId = card.dataset.courseId;
+            card.querySelector('.wishlist-btn-card').classList.toggle('active', wishlistIds.has(courseId));
+        });
+    };
+
+    const toggleWishlist = async (courseId) => {
+        const { data, error } = await sb
+            .from('wishlist')
+            .select('id')
+            .eq('user_id', currentUser.id)
+            .eq('course_id', courseId)
+            .single();
+
+        if (data) { // Item exists in wishlist, so remove it
+            await sb.from('wishlist').delete().match({ id: data.id });
+            showToast('Removed from wishlist.');
+        } else { // Item does not exist, so add it
+            await sb.from('wishlist').insert({ user_id: currentUser.id, course_id: courseId });
+            showToast('Added to wishlist!');
+        }
+
+        // After DB operation, refresh all icons and the panel to ensure consistency
+        await updateWishlistIcons();
+
+        // After adding/removing, refresh the wishlist in the profile panel if it's open
+        const wishlistTab = document.querySelector('.profile-tab-btn[data-tab="profile-wishlist"]');
+        if (wishlistTab && wishlistTab.classList.contains('active')) {
+            loadWishlist();
+        }
+    };
+
+    async function removeFromWishlist(courseId, element) {
+        if (!currentUser) return;
+        const { error } = await sb.from('wishlist').delete().match({ user_id: currentUser.id, course_id: courseId });
+        if (!error) {
+            element.parentElement.remove();
+            showToast('Course removed from wishlist.');
+            document.querySelector(`.course-card[data-course-id="${courseId}"] .wishlist-btn-card`)?.classList.remove('active');
+        }
+    }
+
+    const loadWishlist = async () => {
+        const wishlistContainer = document.getElementById('profile-wishlist');
+        if (!currentUser) {
+            wishlistContainer.innerHTML = '<p style="font-size: 0.9rem; color: var(--muted);">Please sign in to see your wishlist.</p>';
+            return;
+        }
+        wishlistContainer.innerHTML = '<p style="font-size: 0.9rem; color: var(--muted);">Loading wishlist...</p>';
+
+        const { data: wishlistItems, error: wishlistError } = await sb
+            .from('wishlist')
+            .select(`
+                course_id,
+                movies (
+                    id,
+                    title,
+                    poster_url
+                )
+            `)
+            .eq('user_id', currentUser.id);
+
+        if (wishlistError) {
+            wishlistContainer.innerHTML = `<p style="font-size: 0.9rem; color: var(--accent);">Error loading wishlist.</p>`;
+            console.error('Wishlist fetch error:', wishlistError);
+            return;
+        }
+
+        if (!wishlistItems || wishlistItems.length === 0) {
+            wishlistContainer.innerHTML = '<p style="font-size: 0.9rem; color: var(--muted);">Your wishlist is empty. Add courses by clicking the heart icon!</p>';
+            return;
+        }
+
+        const itemsHtml = wishlistItems.map(item => {
+            // The 'movies' property will be an object if the relation is found, otherwise null.
+            const course = item.movies;
+            if (!course) return ''; // Skip if the related course is not found
+            return `
+                <div class="wishlist-item">
+                    <img src="${course.poster_url || 'assets/logo.png'}" alt="${course.title}" loading="lazy">
+                    <p>${course.title}</p>
+                    <i class="fas fa-times remove-wishlist-btn" onclick="removeFromWishlist('${course.id}', this)"></i>
+                </div>`;
+        }).join('');
+
+        wishlistContainer.innerHTML = itemsHtml || '<p style="font-size: 0.9rem; color: var(--muted);">Your wishlist is empty.</p>';
+    };
+
+
+    // New function for profile editing logic
+    const setupProfileEdit = () => {
+        const editUsernameInput = document.getElementById('editUsernameInput');
+        const saveUsernameBtn = document.getElementById('saveUsernameBtn');
+
+        saveUsernameBtn.addEventListener('click', async () => {
+            if (!currentUser) {
+                showToast('Please sign in to change your username.', 'error');
+                return;
+            }
+            const newUsername = editUsernameInput.value.trim();
+            if (!newUsername) {
+                showToast('Username cannot be empty.', 'error');
+                return;
+            }
+            if (newUsername === (currentUser.user_metadata?.username || currentUser.email.split('@')[0])) {
+                showToast('Username is already set to this value.', 'info');
+                return;
+            }
+
+            const { error } = await sb.auth.updateUser({ data: { username: newUsername } });
+            if (error) {
+                showToast(`Failed to update username: ${error.message}`, 'error');
+            } else {
+                showToast('Username updated successfully!', 'success');
+                updateUserUI(); // Refresh UI to show new username
+            }
+        });
+    };
+
+    const setupAvatarModal = () => {
+      const uploadAvatarBtn = document.getElementById('upload-avatar-btn'); // This is the camera icon
+      const avatarModal = document.getElementById('avatar-selection-modal');
+      const closeAvatarModalBtn = document.getElementById('close-avatar-modal');
+
+      // Close the modal
+      closeAvatarModalBtn.addEventListener('click', () => {
+          avatarModal.style.display = 'none'; 
+          document.body.classList.remove('no-scroll'); 
+      });
+
+      // Handle selection of default avatars
+      document.querySelectorAll('.avatar-choices img').forEach(img => {
+          img.addEventListener('click', async () => {
+              if (!currentUser) return; // Safety check
+              const avatarUrl = img.dataset.avatarUrl;
+              await updateAvatarInProfile(avatarUrl);
+              avatarModal.style.display = 'none';
+              document.body.classList.remove('no-scroll');
+          });
+        img.addEventListener('click', async () => {
+            if (!currentUser) return; // Safety check
+
+            // Add 'selected' class to the clicked image and remove from others
+            document.querySelectorAll('.avatar-choices img').forEach(i => i.classList.remove('selected'));
+            img.classList.add('selected');
+
+            // Wait a moment for the user to see the selection, then update
+            setTimeout(async () => {
+                const avatarUrl = img.dataset.avatarUrl;
+                await updateAvatarInProfile(avatarUrl);
+                avatarModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }, 400); // 400ms delay
+        });
+      });
+    };
+
+    // Helper function to update avatar URL in the database and refresh UI
+    async function updateAvatarInProfile(avatarUrl) {
+        if (!currentUser) return;
+
+        const { data, error } = await sb.auth.updateUser({
+            data: {
+                ...currentUser.user_metadata, // Preserve existing metadata
+                avatar_url: avatarUrl
+            }
+        });
+
+        if (error) {
+            showToast(`Failed to update profile: ${error.message}`, 'error');
+        } else {
+            showToast('Avatar updated!', 'success');
+            updateUserUI(); // Refresh the UI to show the new avatar
+        }
+    }
+  </script>
+
+  <script>
+    /* ------------------------------------------------------
+       AI ASSISTANT SCRIPT
+    ------------------------------------------------------ */
+    const launcher = document.getElementById("ai-launcher");
+    const chatPopup = document.getElementById("chat-popup");
+    const chatWindow = document.getElementById("chat-window");
+    const userInput = document.getElementById("user-input");
+    const typingIndicator = document.getElementById("typing");
+    const closeChat = document.getElementById("close-chat");
+
+    // --- Predefined Questions and Answers ---
+    const predefinedQA = { 
+      "What is Courses Hub?": "Courses Hub is a free learning platform that provides thousands of professional-grade courses in coding, hacking, marketing, and personal development — all completely free for learners.",
+      "How do I get a course?": "To get a course, find one you like on the 'Courses' page and click the 'Get The Course' button. If you're not signed in, you'll be asked to do so first. For some courses, you may need to generate a 24-hour access key.",
+      "Are the courses free?": "Yes! Our platform believes in making skills accessible to everyone. All listed courses are completely free with zero hidden charges.",
+      "How can I use this website?": "You can explore thousands of free courses, search for specific topics, filter by category, and get access to course materials. For some courses, you'll need to sign in and generate a 24-hour access key.",
+      "What does this website do?": "Courses Hub provides free access to over 10,000 courses on subjects like Coding, Hacking, Trading, and Self Development. It's a platform for learning new skills from experts without any cost.",
+      "How do I find the content I need?": "You can use the search bar on the 'Our Courses' section to look for specific topics. You can also click on the category buttons like 'Coding' or 'Trading' to filter the courses and find what you're looking for.",
+      "Is this website free to use?": "Yes, absolutely! All courses on Courses Hub are provided free of cost. The mission is to make skills and learning accessible to everyone.",
+      "How do I create an account?": "You can create an account by clicking the 'Sign In' button in the top-right corner. This will take you to the login page where you can find a 'Sign Up' link to register with your email and a password.",
+      "I can’t log in, what should I do?": "If you're having trouble logging in, please double-check your email and password. If you've forgotten your password, there should be a password reset option on the login page. If you're still stuck, you can contact support via the contact form.",
+      "How do I download files?": "Once you get access to a course, you'll see a list of episodes and resources. For downloadable files like PDFs or handbooks, there will be a 'Download' button next to the resource name.",
+      "How do I contact support?": "You can contact us by scrolling down to the 'Contact Us' section on the homepage. You can send us a message through the form, or use the provided email, YouTube, or Telegram links.",
+      "default": "I'm sorry, I can only answer the suggested questions right now. I'm still learning! Please select one of the prompts above or type your own question."
+    }; 
+
+    function appendUser(msg) {
+      chatWindow.innerHTML += `<div class="message user-msg">${msg}</div>`;
+      chatWindow.scrollTo(0, chatWindow.scrollHeight);
+    }
+
+    // --- New Typewriter Effect for Bot ---
+    function appendBotWithTyping(msg) {
+      typingIndicator.style.display = "block";
+      chatWindow.scrollTo(0, chatWindow.scrollHeight);
+
+      // Create a new message container for the bot
+      const botMsgContainer = document.createElement('div');
+      botMsgContainer.className = 'message bot-msg';
+      chatWindow.appendChild(botMsgContainer);
+
+      let i = 0;
+      const speed = 20; // milliseconds per character
+
+      function typeWriter() {
+        if (i < msg.length) {
+          // Handle HTML tags correctly
+          if (msg.charAt(i) === '<') {
+            const tagEnd = msg.indexOf('>', i);
+            if (tagEnd !== -1) {
+              botMsgContainer.innerHTML += msg.substring(i, tagEnd + 1);
+              i = tagEnd;
+            }
+          } else {
+            botMsgContainer.innerHTML += msg.charAt(i);
+          }
+          i++;
+          chatWindow.scrollTo(0, chatWindow.scrollHeight);
+          setTimeout(typeWriter, speed);
+        } else {
+          typingIndicator.style.display = "none";
+        }
+      }
+
+      // Start typing after a short delay
+      setTimeout(typeWriter, 500);
+    }
+
+    function loadWelcome() {
+      // Check if the chat window is empty to show welcome message
+      if (chatWindow.children.length === 0) {
+        appendBotWithTyping(
+          `Hello! I'm <b>Laura</b>, your personal AI assistant 🤖💙<br> 
+          I'm here to help you explore Courses Hub. Please select one of the questions below.`
+        );
+      }
+    }
+
+    launcher.onclick = () => {
+      chatPopup.classList.add("active");
+      document.body.style.overflow = 'hidden';
+      loadWelcome();
+    }
+
+    closeChat.onclick = () => {
+      chatPopup.classList.remove("active");
+      document.body.style.overflow = 'auto';
+    };
+
+    document.getElementById("send-btn").onclick = sendMsg;
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMsg();
+    });
+
+    document.getElementById("suggested-prompts").addEventListener("click", (e) => {
+      if (e.target.classList.contains("prompt-btn")) {
+        const promptText = e.target.textContent;
+        userInput.value = promptText;
+        sendMsg(promptText);
+      }
+    });
+
+    function sendMsg(forcedText = null) {
+      const text = forcedText || userInput.value.trim();
+      if (!text) return;
+
+      appendUser(text);
+      userInput.value = ""; 
+      const reply = predefinedQA[text] || predefinedQA["default"];
+      appendBotWithTyping(reply);
+    }
+  </script>
+</body>
+</html>
