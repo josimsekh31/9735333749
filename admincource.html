@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses Hub - Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --accent: #FF2D95;
+      --secondary: #4C1D95;
+      --bg-dark: #0B0426;
+      --surface: #0F072F;
+      --text: #F8F6FF;
+      --muted: #BDB4FF;
+      --gradient: linear-gradient(135deg, #7C3AED 0%, #FF2D95 100%);
+      --transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Admin Header */
+    .admin-header {
+      background: var(--surface);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .admin-header h1 {
+      font-size: 1.8rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .admin-header a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .admin-header a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Admin Layout */
+    .admin-container {
+      display: flex;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+      width: 250px;
+      background: var(--surface);
+      padding: 1.5rem 0;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .admin-sidebar ul {
+      list-style: none;
+    }
+
+    .admin-sidebar li {
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-sidebar a {
+      display: block;
+      padding: 0.8rem 1.5rem;
+      color: var(--text);
+      text-decoration: none;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .admin-sidebar a:hover, .admin-sidebar a.active {
+      background: rgba(124, 58, 237, 0.2);
+      color: var(--accent);
+    }
+
+    .admin-sidebar a.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--accent);
+    }
+
+    .admin-sidebar i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .admin-main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    /* Dashboard Stats */
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .stat-icon.courses {
+      background: rgba(124, 58, 237, 0.2);
+      color: var(--primary);
+    }
+
+    .stat-icon.users {
+      background: rgba(255, 45, 149, 0.2);
+      color: var(--accent);
+    }
+
+    .stat-icon.episodes {
+      background: rgba(76, 29, 149, 0.2);
+      color: var(--secondary);
+    }
+
+    .stat-icon.views {
+      background: rgba(189, 180, 255, 0.2);
+      color: var(--muted);
+    }
+
+    .stat-info h3 {
+      font-size: 1.8rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-info p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Tables */
+    .admin-table-container {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .admin-table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-table-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .btn-danger {
+      background: rgba(255, 59, 48, 0.2);
+      color: #ff3b30;
+      border: 1px solid rgba(255, 59, 48, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 59, 48, 0.3);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .admin-table th {
+      text-align: left;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .admin-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .admin-table tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .table-actions button {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-edit {
+      background: rgba(76, 29, 149, 0.2);
+      color: var(--secondary);
+    }
+
+    .btn-edit:hover {
+      background: rgba(76, 29, 149, 0.3);
+    }
+
+    .btn-delete {
+      background: rgba(255, 59, 48, 0.2);
+      color: #ff3b30;
+    }
+
+    .btn-delete:hover {
+      background: rgba(255, 59, 48, 0.3);
+    }
+
+    /* Forms */
+    .admin-form-container {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-form-container h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 45, 149, 0.1);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      display: inline-block;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255,255,255,0.2);
+      transition: var(--transition);
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Tabs */
+    .admin-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-tab {
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border-bottom: 2px solid transparent;
+    }
+
+    .admin-tab:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .admin-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-left: 4px solid #4caf50;
+    }
+
+    .toast.error {
+      border-left: 4px solid #f44336;
+    }
+
+    .toast.info {
+      border-left: 4px solid #2196f3;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.8);
+      transition: transform 0.3s;
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .admin-sidebar {
+        width: 70px;
+      }
+
+      .admin-sidebar a span {
+        display: none;
+      }
+
+      .admin-sidebar a {
+        justify-content: center;
+      }
+
+      .admin-sidebar i {
+        margin-right: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        flex-direction: column;
+      }
+
+      .admin-sidebar {
+        width: 100%;
+        padding: 1rem 0;
+      }
+
+      .admin-sidebar ul {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .admin-sidebar li {
+        margin: 0 0.5rem;
+      }
+
+      .dashboard-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Courses Hub Admin</h1>
+    <div>
+      <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Site</a>
+    </div>
+  </header>
+
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <ul>
+        <li><a href="#dashboard" class="nav-link active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+        <li><a href="#courses" class="nav-link" data-section="courses"><i class="fas fa-book"></i> <span>Courses</span></a></li>
+        <li><a href="#episodes" class="nav-link" data-section="episodes"><i class="fas fa-video"></i> <span>Episodes</span></a></li>
+        <li><a href="#categories" class="nav-link" data-section="categories"><i class="fas fa-tags"></i> <span>Categories</span></a></li>
+        <li><a href="#users" class="nav-link" data-section="users"><i class="fas fa-users"></i> <span>Users</span></a></li>
+        <li><a href="#maintenance" class="nav-link" data-section="maintenance"><i class="fas fa-tools"></i> <span>Maintenance</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="admin-section active">
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon courses">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="total-courses">0</h3>
+              <p>Total Courses</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon users">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="total-users">0</h3>
+              <p>Total Users</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon episodes">
+              <i class="fas fa-video"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="total-episodes">0</h3>
+              <p>Total Episodes</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon views">
+              <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="total-views">0</h3>
+              <p>Total Views</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <div class="admin-table-header">
+            <h2>Recent Courses</h2>
+            <a href="#courses" class="btn btn-primary">View All</a>
+          </div>
+          <div class="loading-spinner" id="recent-courses-loading">
+            <div class="spinner"></div>
+          </div>
+          <table class="admin-table" id="recent-courses-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Views</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody id="recent-courses-tbody">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Courses Section -->
+      <section id="courses" class="admin-section">
+        <div class="admin-table-container">
+          <div class="admin-table-header">
+            <h2>Courses Management</h2>
+            <button class="btn btn-primary" id="add-course-btn"><i class="fas fa-plus"></i> Add Course</button>
+          </div>
+          <div class="loading-spinner" id="courses-loading">
+            <div class="spinner"></div>
+          </div>
+          <table class="admin-table" id="courses-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Instructor</th>
+                <th>Price</th>
+                <th>Views</th>
+                <th>Visible</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="courses-tbody">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Episodes Section -->
+      <section id="episodes" class="admin-section">
+        <div class="admin-table-container">
+          <div class="admin-table-header">
+            <h2>Episodes Management</h2>
+            <button class="btn btn-primary" id="add-episode-btn"><i class="fas fa-plus"></i> Add Episode</button>
+          </div>
+          <div class="loading-spinner" id="episodes-loading">
+            <div class="spinner"></div>
+          </div>
+          <table class="admin-table" id="episodes-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Course</th>
+                <th>Episode Number</th>
+                <th>Duration</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="episodes-tbody">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Categories Section -->
+      <section id="categories" class="admin-section">
+        <div class="admin-table-container">
+          <div class="admin-table-header">
+            <h2>Categories Management</h2>
+            <button class="btn btn-primary" id="add-category-btn"><i class="fas fa-plus"></i> Add Category</button>
+          </div>
+          <div class="loading-spinner" id="categories-loading">
+            <div class="spinner"></div>
+          </div>
+          <table class="admin-table" id="categories-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Courses Count</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="categories-tbody">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Users Section -->
+      <section id="users" class="admin-section">
+        <div class="admin-table-container">
+          <div class="admin-table-header">
+            <h2>Users Management</h2>
+          </div>
+          <div class="loading-spinner" id="users-loading">
+            <div class="spinner"></div>
+          </div>
+          <table class="admin-table" id="users-table" style="display: none;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Created At</th>
+                <th>Last Sign In</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <!-- Will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Maintenance Section -->
+      <section id="maintenance" class="admin-section">
+        <div class="admin-form-container">
+          <h2>Maintenance Mode</h2>
+          <form id="maintenance-form">
+            <div class="form-group">
+              <label for="maintenance-toggle">Enable Maintenance Mode</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="maintenance-toggle">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="maintenance-heading">Maintenance Heading</label>
+              <input type="text" id="maintenance-heading" placeholder="e.g. Under Maintenance">
+            </div>
+            <div class="form-group">
+              <label for="maintenance-message">Maintenance Message</label>
+              <textarea id="maintenance-message" placeholder="Enter maintenance message..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="maintenance-telegram">Telegram Link</label>
+              <input type="text" id="maintenance-telegram" placeholder="https://t.me/yourchannel">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Course Modal -->
+  <div class="modal" id="course-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="course-modal-title">Add Course</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="course-form">
+        <input type="hidden" id="course-id">
+        <div class="form-group">
+          <label for="course-title">Title</label>
+          <input type="text" id="course-title" required>
+        </div>
+        <div class="form-group">
+          <label for="course-description">Description</label>
+          <textarea id="course-description" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="course-category">Category</label>
+          <select id="course-category" required>
+            <!-- Will be populated by JavaScript -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="course-instructor">Instructor Name</label>
+          <input type="text" id="course-instructor" required>
+        </div>
+        <div class="form-group">
+          <label for="course-instructor-bio">Instructor Bio</label>
+          <textarea id="course-instructor-bio"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="course-instructor-photo">Instructor Photo URL</label>
+          <input type="text" id="course-instructor-photo">
+        </div>
+        <div class="form-group">
+          <label for="course-poster">Poster URL</label>
+          <input type="text" id="course-poster">
+        </div>
+        <div class="form-group">
+          <label for="course-real-price">Real Price</label>
+          <input type="text" id="course-real-price">
+        </div>
+        <div class="form-group">
+          <label for="course-our-price">Our Price</label>
+          <input type="text" id="course-our-price">
+        </div>
+        <div class="form-group">
+          <label for="course-language">Language</label>
+          <input type="text" id="course-language">
+        </div>
+        <div class="form-group">
+          <label for="course-what-you-learn">What You Will Learn (comma separated)</label>
+          <textarea id="course-what-you-learn"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="course-requirements">Requirements (comma separated)</label>
+          <textarea id="course-requirements"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="course-access-type">Access Type</label>
+          <select id="course-access-type">
+            <option value="24hr">24 Hour Access</option>
+            <option value="lifetime">Lifetime Access</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="course-payment-price">Payment Price (for paid courses)</label>
+          <input type="text" id="course-payment-price">
+        </div>
+        <div class="form-group">
+          <label for="course-visible">Visible</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="course-visible" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Course</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Episode Modal -->
+  <div class="modal" id="episode-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="episode-modal-title">Add Episode</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="episode-form">
+        <input type="hidden" id="episode-id">
+        <div class="form-group">
+          <label for="episode-title">Title</label>
+          <input type="text" id="episode-title" required>
+        </div>
+        <div class="form-group">
+          <label for="episode-course">Course</label>
+          <select id="episode-course" required>
+            <!-- Will be populated by JavaScript -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="episode-number">Episode Number</label>
+          <input type="number" id="episode-number" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="episode-duration">Duration (in minutes)</label>
+          <input type="number" id="episode-duration" min="1">
+        </div>
+        <div class="form-group">
+          <label for="episode-video-url">Video URL</label>
+          <input type="text" id="episode-video-url">
+        </div>
+        <div class="form-group">
+          <label for="episode-video-url-m3u8">Video URL (M3U8)</label>
+          <input type="text" id="episode-video-url-m3u8">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Episode</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal" id="category-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="category-modal-title">Add Category</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="category-form">
+        <input type="hidden" id="category-id">
+        <div class="form-group">
+          <label for="category-name">Name</label>
+          <input type="text" id="category-name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Category</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-message">Operation completed successfully</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Supabase Setup
+    const SUPABASE_URL = 'https://yspxrgqruwtuismwutil.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzcHhyZ3FydXd0dWlzbXd1dGlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2OTc5MjAsImV4cCI6MjA3ODI3MzkyMH0.tF-0tsT2pxTbf3eVEagjqvFLWIJP832H9aOOhwpvv2s';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // DOM Elements
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.admin-section');
+    const modals = document.querySelectorAll('.modal');
+    const modalCloseButtons = document.querySelectorAll('.modal-close');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNavigation();
+      setupModals();
+      loadDashboardData();
+      setupForms();
+    });
+
+    // Navigation
+    function setupNavigation() {
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetSection = link.getAttribute('data-section');
+          
+          // Update active nav
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          
+          // Show target section
+          sections.forEach(section => {
+            section.classList.remove('active');
+            if (section.id === targetSection) {
+              section.classList.add('active');
+              
+              // Load data for the section
+              switch (targetSection) {
+                case 'dashboard':
+                  loadDashboardData();
+                  break;
+                case 'courses':
+                  loadCourses();
+                  break;
+                case 'episodes':
+                  loadEpisodes();
+                  break;
+                case 'categories':
+                  loadCategories();
+                  break;
+                case 'users':
+                  loadUsers();
+                  break;
+                case 'maintenance':
+                  loadMaintenanceSettings();
+                  break;
+              }
+            }
+          });
+        });
+      });
+    }
+
+    // Modals
+    function setupModals() {
+      modalCloseButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.closest('.modal').classList.remove('active');
+        });
+      });
+
+      // Close modal when clicking outside
+      modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+          }
+        });
+      });
+    }
+
+    // Forms
+    function setupForms() {
+      // Course Form
+      document.getElementById('course-form').addEventListener('submit', handleCourseSubmit);
+      document.getElementById('add-course-btn').addEventListener('click', () => {
+        document.getElementById('course-modal-title').textContent = 'Add Course';
+        document.getElementById('course-form').reset();
+        document.getElementById('course-id').value = '';
+        document.getElementById('course-modal').classList.add('active');
+        loadCategoriesIntoSelect('course-category');
+      });
+
+      // Episode Form
+      document.getElementById('episode-form').addEventListener('submit', handleEpisodeSubmit);
+      document.getElementById('add-episode-btn').addEventListener('click', () => {
+        document.getElementById('episode-modal-title').textContent = 'Add Episode';
+        document.getElementById('episode-form').reset();
+        document.getElementById('episode-id').value = '';
+        document.getElementById('episode-modal').classList.add('active');
+        loadCoursesIntoSelect('episode-course');
+      });
+
+      // Category Form
+      document.getElementById('category-form').addEventListener('submit', handleCategorySubmit);
+      document.getElementById('add-category-btn').addEventListener('click', () => {
+        document.getElementById('category-modal-title').textContent = 'Add Category';
+        document.getElementById('category-form').reset();
+        document.getElementById('category-id').value = '';
+        document.getElementById('category-modal').classList.add('active');
+      });
+
+      // Maintenance Form
+      document.getElementById('maintenance-form').addEventListener('submit', handleMaintenanceSubmit);
+    }
+
+    // Dashboard Data
+    async function loadDashboardData() {
+      try {
+        // Get total counts
+        const { count: coursesCount } = await sb.from('movies').select('*', { count: 'exact', head: true });
+        const { count: usersCount } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+        const { count: episodesCount } = await sb.from('episodes').select('*', { count: 'exact', head: true });
+        
+        // Get total views
+        const { data: courses } = await sb.from('movies').select('views');
+        const totalViews = courses.reduce((sum, course) => sum + (course.views || 0), 0);
+        
+        // Update DOM
+        document.getElementById('total-courses').textContent = coursesCount || 0;
+        document.getElementById('total-users').textContent = usersCount || 0;
+        document.getElementById('total-episodes').textContent = episodesCount || 0;
+        document.getElementById('total-views').textContent = totalViews || 0;
+        
+        // Get recent courses
+        const { data: recentCourses, error } = await sb
+          .from('movies')
+          .select('id, title, category_id, views, created_at, categories(name)')
+          .eq('is_visible', true)
+          .order('created_at', { ascending: false })
+          .limit(5);
+          
+        if (error) throw error;
+        
+        // Hide loading spinner
+        document.getElementById('recent-courses-loading').style.display = 'none';
+        document.getElementById('recent-courses-table').style.display = 'table';
+        
+        // Populate table
+        const tbody = document.getElementById('recent-courses-tbody');
+        tbody.innerHTML = '';
+        
+        recentCourses.forEach(course => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${course.title}</td>
+            <td>${course.categories ? course.categories.name : 'N/A'}</td>
+            <td>${course.views || 0}</td>
+            <td>${new Date(course.created_at).toLocaleDateString()}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showToast('Error loading dashboard data', 'error');
+      }
+    }
+
+    // Courses
+    async function loadCourses() {
+      try {
+        // Show loading spinner
+        document.getElementById('courses-loading').style.display = 'flex';
+        document.getElementById('courses-table').style.display = 'none';
+        
+        const { data: courses, error } = await sb
+          .from('movies')
+          .select('id, title, category_id, instructor_name, real_price, our_price, views, is_visible, categories(name)')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        // Hide loading spinner
+        document.getElementById('courses-loading').style.display = 'none';
+        document.getElementById('courses-table').style.display = 'table';
+        
+        // Populate table
+        const tbody = document.getElementById('courses-tbody');
+        tbody.innerHTML = '';
+        
+        courses.forEach(course => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${course.id}</td>
+            <td>${course.title}</td>
+            <td>${course.categories ? course.categories.name : 'N/A'}</td>
+            <td>${course.instructor_name || 'N/A'}</td>
+            <td>${course.our_price || 'Free'}</td>
+            <td>${course.views || 0}</td>
+            <td>
+              <label class="toggle-switch">
+                <input type="checkbox" ${course.is_visible ? 'checked' : ''} onchange="toggleCourseVisibility(${course.id}, this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-edit" onclick="editCourse(${course.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-delete" onclick="deleteCourse(${course.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading courses:', error);
+        showToast('Error loading courses', 'error');
+      }
+    }
+
+    async function handleCourseSubmit(e) {
+      e.preventDefault();
+      
+      try {
+        const courseId = document.getElementById('course-id').value;
+        const courseData = {
+          title: document.getElementById('course-title').value,
+          description: document.getElementById('course-description').value,
+          category_id: document.getElementById('course-category').value,
+          instructor_name: document.getElementById('course-instructor').value,
+          instructor_bio: document.getElementById('course-instructor-bio').value,
+          instructor_photo_url: document.getElementById('course-instructor-photo').value,
+          poster_url: document.getElementById('course-poster').value,
+          real_price: document.getElementById('course-real-price').value,
+          our_price: document.getElementById('course-our-price').value,
+          language: document.getElementById('course-language').value,
+          what_you_will_learn: document.getElementById('course-what-you-learn').value.split(',').map(item => item.trim()),
+          requirements: document.getElementById('course-requirements').value.split(',').map(item => item.trim()),
+          access_type: document.getElementById('course-access-type').value,
+          payment_price: document.getElementById('course-payment-price').value,
+          is_visible: document.getElementById('course-visible').checked
+        };
+        
+        let result;
+        if (courseId) {
+          // Update existing course
+          result = await sb.from('movies').update(courseData).eq('id', courseId);
+        } else {
+          // Add new course
+          result = await sb.from('movies').insert(courseData);
+        }
+        
+        if (result.error) throw result.error;
+        
+        // Close modal and refresh table
+        document.getElementById('course-modal').classList.remove('active');
+        loadCourses();
+        showToast(courseId ? 'Course updated successfully' : 'Course added successfully', 'success');
+      } catch (error) {
+        console.error('Error saving course:', error);
+        showToast('Error saving course', 'error');
+      }
+    }
+
+    async function editCourse(courseId) {
+      try {
+        const { data: course, error } = await sb
+          .from('movies')
+          .select('*')
+          .eq('id', courseId)
+          .single();
+          
+        if (error) throw error;
+        
+        // Populate form
+        document.getElementById('course-id').value = course.id;
+        document.getElementById('course-title').value = course.title;
+        document.getElementById('course-description').value = course.description;
+        document.getElementById('course-category').value = course.category_id;
+        document.getElementById('course-instructor').value = course.instructor_name || '';
+        document.getElementById('course-instructor-bio').value = course.instructor_bio || '';
+        document.getElementById('course-instructor-photo').value = course.instructor_photo_url || '';
+        document.getElementById('course-poster').value = course.poster_url || '';
+        document.getElementById('course-real-price').value = course.real_price || '';
+        document.getElementById('course-our-price').value = course.our_price || '';
+        document.getElementById('course-language').value = course.language || '';
+        document.getElementById('course-what-you-learn').value = course.what_you_will_learn ? course.what_you_will_learn.join(', ') : '';
+        document.getElementById('course-requirements').value = course.requirements ? course.requirements.join(', ') : '';
+        document.getElementById('course-access-type').value = course.access_type || '24hr';
+        document.getElementById('course-payment-price').value = course.payment_price || '';
+        document.getElementById('course-visible').checked = course.is_visible;
+        
+        // Load categories into select
+        await loadCategoriesIntoSelect('course-category');
+        
+        // Update modal title and show
+        document.getElementById('course-modal-title').textContent = 'Edit Course';
+        document.getElementById('course-modal').classList.add('active');
+      } catch (error) {
+        console.error('Error loading course:', error);
+        showToast('Error loading course', 'error');
+      }
+    }
+
+    async function deleteCourse(courseId) {
+      if (!confirm('Are you sure you want to delete this course?')) return;
+      
+      try {
+        // First delete related episodes
+        await sb.from('episodes').delete().eq('course_id', courseId);
+        
+        // Then delete the course
+        const { error } = await sb.from('movies').delete().eq('id', courseId);
+        
+        if (error) throw error;
+        
+        loadCourses();
+        showToast('Course deleted successfully', 'success');
+      } catch (error) {
+        console.error('Error deleting course:', error);
+        showToast('Error deleting course', 'error');
+      }
+    }
+
+    async function toggleCourseVisibility(courseId, isVisible) {
+      try {
+        const { error } = await sb
+          .from('movies')
+          .update({ is_visible: isVisible })
+          .eq('id', courseId);
+          
+        if (error) throw error;
+        
+        showToast(`Course ${isVisible ? 'visible' : 'hidden'}`, 'success');
+      } catch (error) {
+        console.error('Error toggling course visibility:', error);
+        showToast('Error updating course visibility', 'error');
+      }
+    }
+
+    // Episodes
+    async function loadEpisodes() {
+      try {
+        // Show loading spinner
+        document.getElementById('episodes-loading').style.display = 'flex';
+        document.getElementById('episodes-table').style.display = 'none';
+        
+        const { data: episodes, error } = await sb
+          .from('episodes')
+          .select('id, title, course_id, episode_number, duration, movies(title)')
+          .order('course_id, episode_number');
+          
+        if (error) throw error;
+        
+        // Hide loading spinner
+        document.getElementById('episodes-loading').style.display = 'none';
+        document.getElementById('episodes-table').style.display = 'table';
+        
+        // Populate table
+        const tbody = document.getElementById('episodes-tbody');
+        tbody.innerHTML = '';
+        
+        episodes.forEach(episode => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${episode.id}</td>
+            <td>${episode.title}</td>
+            <td>${episode.movies ? episode.movies.title : 'N/A'}</td>
+            <td>${episode.episode_number}</td>
+            <td>${episode.duration ? `${episode.duration} min` : 'N/A'}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-edit" onclick="editEpisode(${episode.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-delete" onclick="deleteEpisode(${episode.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading episodes:', error);
+        showToast('Error loading episodes', 'error');
+      }
+    }
+
+    async function handleEpisodeSubmit(e) {
+      e.preventDefault();
+      
+      try {
+        const episodeId = document.getElementById('episode-id').value;
+        const episodeData = {
+          title: document.getElementById('episode-title').value,
+          course_id: document.getElementById('episode-course').value,
+          episode_number: parseInt(document.getElementById('episode-number').value),
+          duration: parseInt(document.getElementById('episode-duration').value) || null,
+          video_url: document.getElementById('episode-video-url').value,
+          video_url_m3u8: document.getElementById('episode-video-url-m3u8').value
+        };
+        
+        let result;
+        if (episodeId) {
+          // Update existing episode
+          result = await sb.from('episodes').update(episodeData).eq('id', episodeId);
+        } else {
+          // Add new episode
+          result = await sb.from('episodes').insert(episodeData);
+        }
+        
+        if (result.error) throw result.error;
+        
+        // Close modal and refresh table
+        document.getElementById('episode-modal').classList.remove('active');
+        loadEpisodes();
+        showToast(episodeId ? 'Episode updated successfully' : 'Episode added successfully', 'success');
+      } catch (error) {
+        console.error('Error saving episode:', error);
+        showToast('Error saving episode', 'error');
+      }
+    }
+
+    async function editEpisode(episodeId) {
+      try {
+        const { data: episode, error } = await sb
+          .from('episodes')
+          .select('*')
+          .eq('id', episodeId)
+          .single();
+          
+        if (error) throw error;
+        
+        // Populate form
+        document.getElementById('episode-id').value = episode.id;
+        document.getElementById('episode-title').value = episode.title;
+        document.getElementById('episode-course').value = episode.course_id;
+        document.getElementById('episode-number').value = episode.episode_number;
+        document.getElementById('episode-duration').value = episode.duration || '';
+        document.getElementById('episode-video-url').value = episode.video_url || '';
+        document.getElementById('episode-video-url-m3u8').value = episode.video_url_m3u8 || '';
+        
+        // Load courses into select
+        await loadCoursesIntoSelect('episode-course');
+        
+        // Update modal title and show
+        document.getElementById('episode-modal-title').textContent = 'Edit Episode';
+        document.getElementById('episode-modal').classList.add('active');
+      } catch (error) {
+        console.error('Error loading episode:', error);
+        showToast('Error loading episode', 'error');
+      }
+    }
+
+    async function deleteEpisode(episodeId) {
+      if (!confirm('Are you sure you want to delete this episode?')) return;
+      
+      try {
+        const { error } = await sb.from('episodes').delete().eq('id', episodeId);
+        
+        if (error) throw error;
+        
+        loadEpisodes();
+        showToast('Episode deleted successfully', 'success');
+      } catch (error) {
+        console.error('Error deleting episode:', error);
+        showToast('Error deleting episode', 'error');
+      }
+    }
+
+    // Categories
+    async function loadCategories() {
+      try {
+        // Show loading spinner
+        document.getElementById('categories-loading').style.display = 'flex';
+        document.getElementById('categories-table').style.display = 'none';
+        
+        const { data: categories, error } = await sb
+          .from('categories')
+          .select('id, name')
+          .order('name');
+          
+        if (error) throw error;
+        
+        // Hide loading spinner
+        document.getElementById('categories-loading').style.display = 'none';
+        document.getElementById('categories-table').style.display = 'table';
+        
+        // Get course count for each category
+        const { data: courseCounts } = await sb
+          .from('movies')
+          .select('category_id')
+          .eq('is_visible', true);
+          
+        const categoryCounts = {};
+        courseCounts.forEach(course => {
+          categoryCounts[course.category_id] = (categoryCounts[course.category_id] || 0) + 1;
+        });
+        
+        // Populate table
+        const tbody = document.getElementById('categories-tbody');
+        tbody.innerHTML = '';
+        
+        categories.forEach(category => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${category.id}</td>
+            <td>${category.name}</td>
+            <td>${categoryCounts[category.id] || 0}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-edit" onclick="editCategory(${category.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn-delete" onclick="deleteCategory(${category.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        showToast('Error loading categories', 'error');
+      }
+    }
+
+    async function handleCategorySubmit(e) {
+      e.preventDefault();
+      
+      try {
+        const categoryId = document.getElementById('category-id').value;
+        const categoryData = {
+          name: document.getElementById('category-name').value
+        };
+        
+        let result;
+        if (categoryId) {
+          // Update existing category
+          result = await sb.from('categories').update(categoryData).eq('id', categoryId);
+        } else {
+          // Add new category
+          result = await sb.from('categories').insert(categoryData);
+        }
+        
+        if (result.error) throw result.error;
+        
+        // Close modal and refresh table
+        document.getElementById('category-modal').classList.remove('active');
+        loadCategories();
+        showToast(categoryId ? 'Category updated successfully' : 'Category added successfully', 'success');
+      } catch (error) {
+        console.error('Error saving category:', error);
+        showToast('Error saving category', 'error');
+      }
+    }
+
+    async function editCategory(categoryId) {
+      try {
+        const { data: category, error } = await sb
+          .from('categories')
+          .select('*')
+          .eq('id', categoryId)
+          .single();
+          
+        if (error) throw error;
+        
+        // Populate form
+        document.getElementById('category-id').value = category.id;
+        document.getElementById('category-name').value = category.name;
+        
+        // Update modal title and show
+        document.getElementById('category-modal-title').textContent = 'Edit Category';
+        document.getElementById('category-modal').classList.add('active');
+      } catch (error) {
+        console.error('Error loading category:', error);
+        showToast('Error loading category', 'error');
+      }
+    }
+
+    async function deleteCategory(categoryId) {
+      if (!confirm('Are you sure you want to delete this category? This will also update all courses in this category to have no category.')) return;
+      
+      try {
+        // First update all courses in this category to have no category
+        await sb.from('movies').update({ category_id: null }).eq('category_id', categoryId);
+        
+        // Then delete the category
+        const { error } = await sb.from('categories').delete().eq('id', categoryId);
+        
+        if (error) throw error;
+        
+        loadCategories();
+        showToast('Category deleted successfully', 'success');
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        showToast('Error deleting category', 'error');
+      }
+    }
+
+    // Users
+    async function loadUsers() {
+      try {
+        // Show loading spinner
+        document.getElementById('users-loading').style.display = 'flex';
+        document.getElementById('users-table').style.display = 'none';
+        
+        const { data: users, error } = await sb
+          .from('profiles')
+          .select('id, email, username, created_at, last_sign_in_at')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        // Hide loading spinner
+        document.getElementById('users-loading').style.display = 'none';
+        document.getElementById('users-table').style.display = 'table';
+        
+        // Populate table
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = '';
+        
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.email}</td>
+            <td>${user.username || 'N/A'}</td>
+            <td>${new Date(user.created_at).toLocaleDateString()}</td>
+            <td>${user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-edit" onclick="viewUser(${user.id})"><i class="fas fa-eye"></i></button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading users:', error);
+        showToast('Error loading users', 'error');
+      }
+    }
+
+    function viewUser(userId) {
+      // In a real application, this would open a modal with user details
+      showToast(`Viewing user with ID: ${userId}`, 'info');
+    }
+
+    // Maintenance
+    async function loadMaintenanceSettings() {
+      try {
+        const { data: maintenance, error } = await sb
+          .from('maintenance')
+          .select('*')
+          .eq('id', 1)
+          .single();
+          
+        if (error && error.code !== 'PGRST116') throw error; // Ignore not found error
+        
+        if (maintenance) {
+          document.getElementById('maintenance-toggle').checked = maintenance.is_active;
+          document.getElementById('maintenance-heading').value = maintenance.heading || '';
+          document.getElementById('maintenance-message').value = maintenance.message || '';
+          document.getElementById('maintenance-telegram').value = maintenance.telegram_link || '';
+        }
+      } catch (error) {
+        console.error('Error loading maintenance settings:', error);
+        showToast('Error loading maintenance settings', 'error');
+      }
+    }
+
+    async function handleMaintenanceSubmit(e) {
+      e.preventDefault();
+      
+      try {
+        const maintenanceData = {
+          is_active: document.getElementById('maintenance-toggle').checked,
+          heading: document.getElementById('maintenance-heading').value,
+          message: document.getElementById('maintenance-message').value,
+          telegram_link: document.getElementById('maintenance-telegram').value
+        };
+        
+        // Check if maintenance record exists
+        const { data: existingMaintenance } = await sb
+          .from('maintenance')
+          .select('id')
+          .eq('id', 1)
+          .single();
+          
+        let result;
+        if (existingMaintenance) {
+          // Update existing maintenance settings
+          result = await sb.from('maintenance').update(maintenanceData).eq('id', 1);
+        } else {
+          // Add new maintenance settings
+          maintenanceData.id = 1;
+          result = await sb.from('maintenance').insert(maintenanceData);
+        }
+        
+        if (result.error) throw result.error;
+        
+        showToast('Maintenance settings saved successfully', 'success');
+      } catch (error) {
+        console.error('Error saving maintenance settings:', error);
+        showToast('Error saving maintenance settings', 'error');
+      }
+    }
+
+    // Helper Functions
+    async function loadCategoriesIntoSelect(selectId) {
+      try {
+        const { data: categories, error } = await sb
+          .from('categories')
+          .select('id, name')
+          .order('name');
+          
+        if (error) throw error;
+        
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Select a category</option>';
+        
+        categories.forEach(category => {
+          const option = document.createElement('option');
+          option.value = category.id;
+          option.textContent = category.name;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    }
+
+    async function loadCoursesIntoSelect(selectId) {
+      try {
+        const { data: courses, error } = await sb
+          .from('movies')
+          .select('id, title')
+          .eq('is_visible', true)
+          .order('title');
+          
+        if (error) throw error;
+        
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Select a course</option>';
+        
+        courses.forEach(course => {
+          const option = document.createElement('option');
+          option.value = course.id;
+          option.textContent = course.title;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading courses:', error);
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      toastMessage.textContent = message;
+      toast.className = `toast ${type}`;
+      
+      // Update icon based on type
+      const icon = toast.querySelector('i');
+      icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                      type === 'error' ? 'fas fa-exclamation-circle' : 
+                      'fas fa-info-circle';
+      
+      // Show toast
+      toast.classList.add('show');
+      
+      // Hide after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
