@@ -92,21 +92,43 @@
         .loader { border: 3px solid #333; border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Auth Guard Overlay */
-        #auth-guard {
-            position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999;
+        /* --- CUSTOM LOGIN OVERLAY --- */
+        #custom-auth-overlay {
+            position: fixed; inset: 0; background: #050505; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+        .login-box {
+            background: var(--bg-panel); padding: 40px; border-radius: 12px;
+            border: 1px solid var(--primary); width: 350px;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.2);
+        }
+        .login-title { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; font-weight: bold; }
+        .login-err { color: var(--danger); font-size: 0.85rem; text-align: center; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Auth Guard -->
-    <div id="auth-guard">
-        <div class="loader" style="width: 50px; height: 50px; margin-bottom: 20px;"></div>
-        <h3>Verifying Admin Access...</h3>
-        <p class="text-muted">If stuck, ensure your user account has 'isAdmin: true' in Firestore.</p>
-        <button class="btn btn-outline" style="margin-top:20px;" onclick="location.reload()">Retry</button>
+    <!-- CUSTOM LOGIN SYSTEM -->
+    <div id="custom-auth-overlay">
+        <div class="login-box">
+            <div class="login-title">SECURE ACCESS</div>
+            <form onsubmit="app.handleCustomLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="admin-user" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="admin-pass" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Secret Code</label>
+                    <input type="password" class="form-input" id="admin-code" required placeholder="6-digit code">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Authenticate</button>
+                <div class="login-err" id="login-error-msg">Invalid Credentials</div>
+            </form>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -119,7 +141,7 @@
             <div class="nav-link" onclick="app.nav('settings')"><i class="fas fa-cog" style="width:20px;"></i> Settings</div>
         </nav>
         <div style="margin-top: auto;">
-            <div class="nav-link" style="color: var(--danger)" onclick="auth.signOut()"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div>
+            <div class="nav-link" style="color: var(--danger)" onclick="location.reload()"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Lock</div>
         </div>
     </aside>
 
@@ -274,11 +296,11 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // ==========================================
-        // CONFIGURATION - MUST MATCH USER.HTML
+        // CONFIGURATION (UPDATED)
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCkndE5h7HOLTg2xEs7mgKimJIwodApFJs",
@@ -293,45 +315,51 @@
         const appInit = initializeApp(firebaseConfig);
         const auth = getAuth(appInit);
         const db = getFirestore(appInit);
-        window.auth = auth; // Expose for logout
 
         let productsCache = [];
         let ordersCache = [];
 
         window.app = {
-            init: () => {
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        // Check Admin Claim
-                        try {
-                            const uDoc = await getDoc(doc(db, "users", user.uid));
-                            if (uDoc.exists() && uDoc.data().isAdmin === true) {
-                                document.getElementById('auth-guard').classList.add('hidden');
-                                app.loadDashboard();
-                            } else {
-                                alert("Access Denied: You do not have administrator privileges.");
-                                // Optional: signOut(auth);
-                            }
-                        } catch (e) {
-                            console.error(e);
-                            alert("Error verifying admin status.");
-                        }
-                    } else {
-                        // Show simple login for admin
-                        const email = prompt("Admin Email:");
-                        const pass = prompt("Admin Password:");
-                        if(email && pass) {
-                            signInWithEmailAndPassword(auth, email, pass).catch(e => alert(e.message));
+            // New Custom Login Logic
+            handleCustomLogin: async (e) => {
+                e.preventDefault();
+                const u = document.getElementById('admin-user').value.trim();
+                const p = document.getElementById('admin-pass').value.trim();
+                const c = document.getElementById('admin-code').value.trim();
+                const err = document.getElementById('login-error-msg');
+
+                // Hardcoded Credentials Check
+                if (u === 'josimsekh31' && p === 'josimsv1' && c === '191355') {
+                    err.style.display = 'none';
+                    
+                    // Attempt anonymous login to ensure Firebase DB access works
+                    try {
+                        const userCredential = await signInAnonymously(auth);
+                        // Access granted
+                        document.getElementById('custom-auth-overlay').classList.add('hidden');
+                        app.loadDashboard();
+                    } catch (error) {
+                        console.error("Auth Error:", error);
+                        if(error.code === 'auth/operation-not-allowed') {
+                            alert("FIREBASE ERROR: 'Anonymous Auth' is disabled.\n\nGo to Firebase Console -> Authentication -> Sign-in method -> Enable Anonymous.");
+                        } else {
+                            alert("Database Connection Failed:\n" + error.message);
                         }
                     }
-                });
+                } else {
+                    err.style.display = 'block';
+                    // Shake animation effect
+                    const box = document.querySelector('.login-box');
+                    box.style.transform = 'translateX(5px)';
+                    setTimeout(() => box.style.transform = 'translateX(0)', 100);
+                }
             },
 
             nav: (view) => {
                 document.querySelectorAll('.main-content > div').forEach(d => d.classList.add('hidden'));
                 document.getElementById(`view-${view}`).classList.remove('hidden');
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                event.currentTarget.classList.add('active'); // simplistic active state
+                event.currentTarget.classList.add('active'); 
                 
                 if(view === 'products') app.loadProducts();
                 if(view === 'orders') app.loadOrders();
@@ -340,49 +368,56 @@
 
             // --- Dashboard ---
             loadDashboard: async () => {
-                // Quick Stats (Client side calc from fetches for demo)
-                const pSnap = await getDocs(collection(db, "products"));
-                document.getElementById('statProducts').textContent = pSnap.size;
+                try {
+                    // Quick Stats (Client side calc from fetches for demo)
+                    const pSnap = await getDocs(collection(db, "products"));
+                    document.getElementById('statProducts').textContent = pSnap.size;
 
-                const oSnap = await getDocs(query(collection(db, "orders"), limit(100))); // limit for perf
-                let revenue = 0;
-                let orderCount = oSnap.size;
-                const salesData = {};
+                    const oSnap = await getDocs(query(collection(db, "orders"), limit(100))); 
+                    let revenue = 0;
+                    let orderCount = oSnap.size;
+                    const salesData = {};
 
-                oSnap.forEach(d => {
-                    const o = d.data();
-                    if(o.status === 'paid' || o.status === 'fulfilled') {
-                        revenue += o.amount;
-                        const date = o.createdAt.toDate().toLocaleDateString();
-                        salesData[date] = (salesData[date] || 0) + o.amount;
+                    oSnap.forEach(d => {
+                        const o = d.data();
+                        if(o.status === 'paid' || o.status === 'fulfilled') {
+                            revenue += o.amount;
+                            const date = o.createdAt.toDate().toLocaleDateString();
+                            salesData[date] = (salesData[date] || 0) + o.amount;
+                        }
+                    });
+                    
+                    document.getElementById('statRevenue').textContent = '₹' + revenue;
+                    document.getElementById('statOrders').textContent = orderCount;
+
+                    // Chart
+                    const ctx = document.getElementById('revenueChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Object.keys(salesData),
+                            datasets: [{
+                                label: 'Revenue (₹)',
+                                data: Object.values(salesData),
+                                borderColor: '#bc13fe',
+                                backgroundColor: 'rgba(188, 19, 254, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#333' } } }
+                        }
+                    });
+                } catch(err) {
+                    console.error("Dashboard Load Error:", err);
+                    if(err.code === 'permission-denied') {
+                        alert("Warning: Firebase Security Rules blocking access. Ensure 'allow read, write: if true;' (for test) or setup rules for auth.uid.");
                     }
-                });
-                
-                document.getElementById('statRevenue').textContent = '₹' + revenue;
-                document.getElementById('statOrders').textContent = orderCount;
-
-                // Chart
-                const ctx = document.getElementById('revenueChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: Object.keys(salesData),
-                        datasets: [{
-                            label: 'Revenue (₹)',
-                            data: Object.values(salesData),
-                            borderColor: '#bc13fe',
-                            backgroundColor: 'rgba(188, 19, 254, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#333' } } }
-                    }
-                });
+                }
             },
 
             // --- Products ---
@@ -440,7 +475,7 @@
                     price: Number(document.getElementById('p-price').value),
                     stock: Number(document.getElementById('p-stock').value),
                     category: document.getElementById('p-cat').value,
-                    thumbnails: [document.getElementById('p-img').value], // Simple single image logic
+                    thumbnails: [document.getElementById('p-img').value], 
                     description: document.getElementById('p-desc').value,
                     visible: document.getElementById('p-visible').checked,
                     updatedAt: new Date()
@@ -521,10 +556,8 @@
                 alert("Settings Saved!");
             }
         };
-
-        // Start
-        app.init();
     </script>
 </body>
 </html>
+
 
